@@ -234,6 +234,104 @@ Include conditional sections (Pattern Context, Institutional Context) only if th
 
 <!-- END OPTIONAL PATTERN SECTIONS -->
 
+### Security Review Follow-Up Questions
+
+<!-- SKELETON INSTRUCTION: Generate technology-specific follow-up questions based on what was detected during analysis. Include ONLY the blocks relevant to the detected technology stack. Do NOT copy this HTML comment into the output. -->
+
+[CONDITIONAL: Include if Kubernetes manifests, Helm charts, or container orchestration detected]
+**Kubernetes & Container Orchestration:**
+- Are pod security standards enforced via an admission controller (OPA/Gatekeeper, Kyverno, or Pod Security Admission)?
+- Is Workload Identity Federation configured with minimal audience scope and validated issuer URLs?
+- Are service account tokens short-lived and non-automounted where not needed?
+- Are `hostPath`, `hostPID`, `hostNetwork` uses justified with documented compensating controls?
+[END-CONDITIONAL]
+
+[CONDITIONAL: Include if secrets, credentials, or key management detected]
+**Credential & Secret Management:**
+- What is the secret rotation policy and failure-handling procedure?
+- Where are break-glass/emergency credentials stored (approved vault vs. local files)?
+- Are secrets synced securely from cloud to edge (if applicable)?
+- Is managed identity used everywhere possible instead of static credentials?
+[END-CONDITIONAL]
+
+[CONDITIONAL: Include if cloud IaC (ARM/Bicep/Terraform/CloudFormation) detected]
+**Cloud IAM & IaC:**
+- Are IAM role assignments least-privilege (no Owner/Contributor without documented justification)?
+- Is Just-In-Time (JIT) access used for privileged operations?
+- Are customer-managed keys (CMK) required for data at rest, or are Microsoft-managed keys acceptable?
+[END-CONDITIONAL]
+
+[CONDITIONAL: Include if LLM, ML model, or AI endpoint detected]
+**AI/LLM Security:**
+- Is PII/sensitive data filtered before sending to external LLM endpoints?
+- Are prompt injection mitigations in place for user-facing AI features?
+- Is model output validated before use in security-sensitive operations (tool calls, data access)?
+[END-CONDITIONAL]
+
+[CONDITIONAL: Include if no alerting/monitoring configs found in codebase]
+**Incident Response & Monitoring:**
+- Does each critical component have an incident detection signal (alerts, metrics, health probes)?
+- Can credentials, keys, or tokens be revoked within SLA?
+- Are incident response runbooks current for all deployment scenarios (cloud, edge, air-gapped)?
+[END-CONDITIONAL]
+
+[CONDITIONAL: Include if HTTP endpoints or web application detected]
+**Web Application Security:**
+- Are CSRF protections enforced on state-changing endpoints?
+- Is OAuth2 using PKCE for public clients?
+- Are cookie flags (HttpOnly, Secure, SameSite) configured correctly?
+- Is CORS configured with specific allowed origins (not wildcards)?
+[END-CONDITIONAL]
+
+**General (always include):**
+- Has the team classified data flowing through this system (PII, PHI, PCI, confidential)?
+- Are there deployment environments not represented in the codebase (air-gapped, edge, multi-region)?
+- When was the last security review or threat model update for this system?
+
+<!-- BEGIN OPTIONAL PATTERN SECTIONS — include only if Step 1.5 pattern matching was performed -->
+
+---
+
+## Pattern Context
+
+| Component | Matched Archetype | Confidence | Review Questions Surfaced | Threats Hinted |
+|-----------|-------------------|------------|--------------------------|----------------|
+[REPEAT: one row per component with a matched archetype]
+| [FILL: ComponentName] | [FILL: archetype-id] | [FILL: 0.XX] | [FILL: count] | [FILL: T-ARCH-NNN, ...] |
+[END-REPEAT]
+
+> Archetype patterns are advisory — all findings are verified against actual code.
+> Pattern data derived from anonymized reviews of similar component types.
+
+<!-- If no archetypes matched ≥0.4, omit this entire section (including the heading). -->
+
+<!-- BEGIN INTERNAL-ONLY SECTION — include ONLY if internal-knowledge/ was active AND mode is "internal" -->
+
+---
+
+## Institutional Context
+
+### Similar System References
+| Component | Similar System | Archetype | Key Insight | Review Date |
+|-----------|---------------|-----------|-------------|-------------|
+[REPEAT: one row per similar system match above threshold]
+| [FILL] | [FILL] | [FILL] | [FILL] | [FILL] |
+[END-REPEAT]
+
+### Prior Decisions Applicable
+| Decision | Source System | Relevance to Current Analysis |
+|----------|-------------|-------------------------------|
+[REPEAT: one row per applicable prior decision]
+| [FILL] | [FILL] | [FILL] |
+[END-REPEAT]
+
+> ⚠️ INTERNAL ONLY — this section references internal system names and must not be published externally.
+
+<!-- If internal-knowledge/ was not active or mode is "public", omit this entire section.
+  ⛔ NEVER include Institutional Context in public-mode reports — this is a data leak. -->
+
+<!-- END OPTIONAL PATTERN SECTIONS -->
+
 ---
 
 ## References Consulted
@@ -316,6 +414,7 @@ Include conditional sections (Pattern Context, Institutional Context) only if th
 - `---` horizontal rules between EVERY pair of `## ` sections (minimum 6)
 - `### Quick Wins` always present (with fallback note if no low-effort findings)
 - `### Needs Verification` and `### Finding Overrides` always present (even if empty with `—`)
+- `### Security Review Follow-Up Questions` always present (technology-conditional + General block)
 - References has TWO subsections with THREE-column tables (never flat 2-column)
 - ALL metadata values wrapped in backticks
 - ALL metadata fields present (Model, Analysis Started, Analysis Completed, Duration)

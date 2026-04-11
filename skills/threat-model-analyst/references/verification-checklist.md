@@ -52,6 +52,7 @@ This file is the **single source of truth** for all verification rules that must
 - [ ] **Action Summary tier hyperlinks**: Tier 1, Tier 2, Tier 3 cells in the Action Summary table are hyperlinks to `5-securityfindings.md#tier-N` anchors
 - [ ] `### Needs Verification` heading exists
 - [ ] `### Finding Overrides` heading exists
+- [ ] `### Security Review Follow-Up Questions` heading exists with technology-conditional blocks and always-present General block
 - [ ] **Action Summary has exactly 4 data rows**: Tier 1, Tier 2, Tier 3, Total. Search for `| Mitigated |` or `| Platform |` or `| Fixed |` in the Action Summary table — FAIL if found. These are NOT separate tiers.
 - [ ] **Git Commit includes date**: The `| Git Commit |` row must contain both the SHA and the commit date (e.g., `f49298ff` (`2026-03-04`)). If only the hash is shown without date → FAIL.
 - [ ] **Baseline/Target Commits include dates** (incremental mode): `| Baseline Commit |` and `| Target Commit |` rows must each include a date alongside the SHA.

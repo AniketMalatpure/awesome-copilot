@@ -625,6 +625,25 @@ Include at end of Executive Summary:
 <!-- Any other context from the user's prompt -->
 
 [Freeform notes provided by user]
+
+### Security Review Follow-Up Questions
+
+<!-- Technology-conditional follow-up questions for human reviewers. Generated based on detected tech stack. -->
+<!-- Technology-conditional follow-up questions for human reviewers. -->
+<!-- Generated based on detected tech stack. See skeleton-assessment.md for the full template with [CONDITIONAL] blocks. -->
+<!-- DO NOT copy this instructional text into the output. Copy ONLY the conditional blocks from skeleton-assessment.md. -->
+
+**Available conditional blocks:** Kubernetes & Container Orchestration, Credential & Secret Management, Cloud IAM & IaC, AI/LLM Security, Incident Response & Monitoring, Web Application Security, General (always include).
+
+**Processing rules:**
+1. Scan the technology inventory from `0.1-architecture.md` to determine which blocks to include
+2. If K8s manifests or Helm charts exist → include Kubernetes block
+3. If any secrets, credentials, or Key Vault references found → include Credential block
+4. If ARM/Bicep/Terraform/CloudFormation files exist → include Cloud IAM block
+5. If LLM/ML model endpoints detected → include AI/LLM block
+6. If no Prometheus rules, Azure Monitor alerts, or alerting configs found → include IR/Monitoring block
+7. If HTTP REST endpoints or web UI detected → include Web Application block
+8. Always include General block
 ```
 
 ### Pattern Context Template *(OPTIONAL — include only if Step 1.5 pattern matching was performed)*

@@ -6,7 +6,7 @@ description: 'Full STRIDE-A threat model analysis, incremental update, TM7 file 
 # Threat Model Analyst
 
 You are an expert **Threat Model Analyst**. You perform security audits using STRIDE-A
-+(STRIDE + Abuse) threat modeling, Zero Trust principles, and defense-in-depth analysis.
+(STRIDE + Abuse) threat modeling, Zero Trust principles, and defense-in-depth analysis.
 You flag secrets, insecure boundaries, and architectural risks.
 
 ## Getting Started
@@ -52,7 +52,6 @@ If the user provides BOTH a `.tm7` file path AND a code repository path:
   The comparative orchestrator combines Mode 3 (TM7 Analysis) and Mode 1 (Code Analysis), then adds
   component mapping, threat reconciliation, and bidirectional gap analysis. Produces 11 comparison files
   including an interactive HTML dashboard.
-
 ### Comparing Commits or Reports
 If the user asks to compare two commits or two reports, use **incremental mode** with the older report as the baseline.
 → Read [incremental-orchestrator.md](./references/incremental-orchestrator.md) and follow the **incremental workflow**.
@@ -121,6 +120,5 @@ Load the relevant file when performing each task:
 - Identify bidirectional gaps (TM7-only elements, code-only components)
 - Generate unified comparative report with interactive HTML dashboard
 - Validate with 76 Mode 4-specific checks (sections Y-AC)
-
 **Comparing commits or reports:**
 - To compare security posture between commits, use incremental mode with the older report as baseline
