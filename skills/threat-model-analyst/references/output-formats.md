@@ -24,7 +24,7 @@ Create a timestamped folder at the start of analysis:
 - The tool writes raw content to disk. If you include ` ```markdown ` at the start, it becomes literal text in the file.
 - **WRONG**: Content starts with ` ```markdown ` — the file will contain the fence as literal text
 - **CORRECT**: Content starts directly with `# Heading` on line 1
-- This applies to ALL `.md` files: `0.1-architecture.md`, `0-assessment.md`, `1-threatmodel.md`, `2-stride-analysis.md`, `3-findings.md`
+- This applies to ALL `.md` files: `2-architecture.md`, `1-assessment.md`, `3-threatmodel.md`, `4-stride-analysis.md`, `5-securityfindings.md`
 
 **NEVER wrap `.mmd` file content in code fences.** The `.mmd` file is raw Mermaid source:
 - **WRONG**: Content starts with ` ```plaintext ` or ` ```mermaid `
@@ -38,25 +38,25 @@ Create a timestamped folder at the start of analysis:
 
 | File | Description | Always? |
 |------|-------------|---------|
-| `0-assessment.md` | Executive summary, risk rating, action plan, metadata | Yes |
-| `0.1-architecture.md` | Architecture overview, components, scenarios, tech stack | Yes |
-| `1-threatmodel.md` | Threat model DFD diagram + element/flow/boundary tables | Yes |
-| `1.1-threatmodel.mmd` | Pure Mermaid DFD (source of truth for detailed diagram) | Yes |
-| `1.2-threatmodel-summary.mmd` | Summary DFD (only if >15 elements or >4 boundaries) | Conditional |
-| `2-stride-analysis.md` | Full STRIDE-A analysis for all components | Yes |
-| `3-findings.md` | Prioritized security findings with remediation | Yes |
+| `1-assessment.md` | Executive summary, risk rating, action plan, metadata | Yes |
+| `2-architecture.md` | Architecture overview, components, scenarios, tech stack | Yes |
+| `3-threatmodel.md` | Threat model DFD diagram + element/flow/boundary tables | Yes |
+| `3.1-threatmodel.mmd` | Pure Mermaid DFD (source of truth for detailed diagram) | Yes |
+| `3.2-threatmodel-summary.mmd` | Summary DFD (only if >15 elements or >4 boundaries) | Conditional |
+| `4-stride-analysis.md` | Full STRIDE-A analysis for all components | Yes |
+| `5-securityfindings.md` | Prioritized security findings with remediation | Yes |
 | `threat-inventory.json` | Structured JSON inventory for comparison matching | Yes |
 | `incremental-comparison.html` | Visual HTML comparison report (incremental mode only) | Conditional |
 
 ---
 
-## 0.1-architecture.md
+## 2-architecture.md
 
 **Purpose:** High-level architecture overview — generated FIRST, before threat modeling begins.
 
 **When to generate:** Every run. Not conditional.
 
-**Diagrams:** All inline Mermaid in the markdown. NO separate `.mmd` files for 0.1-architecture.md.
+**Diagrams:** All inline Mermaid in the markdown. NO separate `.mmd` files for 2-architecture.md.
 
 ### Content Structure
 
@@ -117,33 +117,44 @@ Create a timestamped folder at the start of analysis:
 6. Use **architecture** diagram styles (not DFD) — see `diagram-conventions.md`
 7. After writing, verify each Mermaid block has valid syntax
 8. **Top Scenarios**: The first 3 scenarios MUST include Mermaid `sequenceDiagram` blocks showing the interaction flow. Each sequence diagram should show actual participants, messages with protocol details, and alt/opt blocks for error paths.
-9. **Component alignment**: Every component listed in Key Components MUST later appear as a section in `2-stride-analysis.md`
+9. **Component alignment**: Every component listed in Key Components MUST later appear as a section in `4-stride-analysis.md`
 10. **Deployment Model**: Must include specific details: ports, protocols, bind addresses, network exposure, and deployment topology (single machine / cluster / multi-tier)
 11. **Security Infrastructure Inventory**: Populate with EVERY security-relevant component found in code (auth, encryption, access control, logging, secrets management)
 
 ---
 
-## 1-threatmodel.md + 1.1-threatmodel.mmd
+## 3-threatmodel.md + 3.1-threatmodel.mmd
 
 **Purpose:** System threat model as a Data Flow Diagram (DFD).
 
 ### Generation Steps
 
-**Step 1:** Create `1.1-threatmodel.mmd` (source of truth)
+**Step 1:** Create `3.1-threatmodel.mmd` (source of truth)
 - Pure Mermaid code, no markdown wrapper
 - Use DFD shapes and styles from `diagram-conventions.md`
 
-**Step 2:** Run the POST-DFD GATE from `orchestrator.md` Step 4 to evaluate and create `1.2-threatmodel-summary.mmd` if threshold is met. See `skeletons/skeleton-summary-dfd.md` for the template.
+**Step 2:** Run the POST-DFD GATE from `orchestrator.md` Step 4 to evaluate and create `3.2-threatmodel-summary.mmd` if threshold is met. See `skeletons/skeleton-summary-dfd.md` for the template.
 
-**Step 3:** Create `1-threatmodel.md` (include Summary View section if summary was generated)
+**Step 3:** Create `3-threatmodel.md` (include Threat Model section if summary was generated)
 
-### 1-threatmodel.md Content
+### 3-threatmodel.md Content
 
 ```markdown
 # Threat Model
 
-## Data Flow Diagram
-<!-- Copy EXACT diagram from 1.1-threatmodel.mmd wrapped in ```mermaid fence -->
+## Threat Model (only if summary diagram generated)
+<!-- Copy from 3.2-threatmodel-summary.mmd -->
+
+## Expanded Threat Model
+<!-- Copy EXACT diagram from 3.1-threatmodel.mmd wrapped in ```mermaid fence -->
+
+## Security Review Questions
+<!-- Step 7c output — mapped Q&A from security-review-questions.md -->
+<!-- This section is placed here so reviewers see the high-level questions before diving into element details -->
+<!-- Group questions by area-specific `###` headings with one table per area; do not emit a single flat table -->
+
+## Basic to Expanded Threat Model Mapping
+| Basic Element | Contains | Basic Flows | Maps to Expanded Flows |
 
 ## Element Table
 | Element | Type | TMT Category | Description | Trust Boundary |
@@ -160,12 +171,6 @@ Create a timestamped folder at the start of analysis:
 ## Trust Boundary Table
 | Boundary | Description | Contains |
 |----------|-------------|----------|
-
-## Summary View (only if summary diagram generated)
-<!-- Copy from 1.2-threatmodel-summary.mmd -->
-
-## Summary to Detailed Mapping
-| Summary Element | Contains | Summary Flows | Maps to Detailed Flows |
 ```
 
 **Key rules:**
@@ -174,7 +179,7 @@ Create a timestamped folder at the start of analysis:
 
 ---
 
-## 2-stride-analysis.md
+## 4-stride-analysis.md
 
 **Purpose:** Full STRIDE + Abuse Cases threat analysis for every component.
 
@@ -186,7 +191,7 @@ Create a timestamped folder at the start of analysis:
 
 ### Anchor-Safe Headings (CRITICAL)
 
-Component `## ` headings become link targets from `3-findings.md`.
+Component `## ` headings become link targets from `5-securityfindings.md`.
 - Use **only** letters, numbers, spaces, and hyphens
 - **FORBIDDEN in headings:** `&`, `/`, `(`, `)`, `.`, `:`, `'`, `"`, `+`, `@`, `!`
 - Replace: `&` → `and`, `/` → `-`, parentheses → remove
@@ -327,7 +332,7 @@ After writing ALL component tables:
 
 ---
 
-## 3-findings.md
+## 5-securityfindings.md
 
 **Purpose:** Prioritized security findings with evidence and remediation.
 
@@ -375,7 +380,7 @@ Sort by severity **within** each tier, then by CVSS descending.
 | Remediation Effort | Low / Medium / High |
 | Mitigation Type | Redesign / Standard Mitigation / Custom Mitigation / Existing Control / Accept Risk / Transfer Risk |
 | Component | Affected component |
-| Related Threats | Individual links to `2-stride-analysis.md#component-anchor` |
+| Related Threats | Individual links to `4-stride-analysis.md#component-anchor` |
 
 ### Full Finding Example
 
@@ -393,7 +398,7 @@ Sort by severity **within** each tier, then by CVSS descending.
 | Remediation Effort | Medium |
 | Mitigation Type | Standard Mitigation |
 | Component | API Gateway |
-| Related Threats | [T01.S](2-stride-analysis.md#api-gateway), [T01.R](2-stride-analysis.md#api-gateway) |
+| Related Threats | [T01.S](4-stride-analysis.md#api-gateway), [T01.R](4-stride-analysis.md#api-gateway) |
 
 #### Description
 
@@ -416,19 +421,19 @@ Send an unauthenticated GET request to `/api/v1/resources` — should return 401
 
 > **⛔ CRITICAL: Related Threats MUST be hyperlinks, NOT plain text. The model consistently outputs plain text like `T-02, T-17` — this is WRONG. Each threat ID must link to the specific component section in stride analysis.**
 
-- Individual links per threat ID: `[T01.S](2-stride-analysis.md#component-name)`
+- Individual links per threat ID: `[T01.S](4-stride-analysis.md#component-name)`
 - **WRONG**: `T-02, T-17, T-23` (plain text, no links)
-- **WRONG**: `[T08.S, T08.T](2-stride-analysis.md)` (grouped, no anchor)
-- **CORRECT**: `[T08.S](2-stride-analysis.md#redis-state-store), [T08.T](2-stride-analysis.md#redis-state-store)`
-- Every `| **Related Threats** |` cell must contain ONLY `[Txx.Y](2-stride-analysis.md#anchor)` format links separated by commas
+- **WRONG**: `[T08.S, T08.T](4-stride-analysis.md)` (grouped, no anchor)
+- **CORRECT**: `[T08.S](4-stride-analysis.md#redis-state-store), [T08.T](4-stride-analysis.md#redis-state-store)`
+- Every `| **Related Threats** |` cell must contain ONLY `[Txx.Y](4-stride-analysis.md#anchor)` format links separated by commas
 
 ### Post-Write Checks
 
 1. **Anchor spot-check**: Verify 3+ Related Threats links resolve to real `##` headings
-2. **Threat coverage check**: Every threat ID in `2-stride-analysis.md` must be referenced by at least one finding
+2. **Threat coverage check**: Every threat ID in `4-stride-analysis.md` must be referenced by at least one finding
 3. **Sort order check**: Within each tier, no higher-CVSS finding appears after a lower-CVSS finding in the same severity band
 4. **CVSS-to-Tier consistency**: Scan every finding — if CVSS has `AV:L` or `PR:H`, finding MUST NOT be in Tier 1. Fix by downgrading the tier, not by changing the CVSS.
-5. **Threat Coverage Verification table**: At the end of `3-findings.md`, include:
+5. **Threat Coverage Verification table**: At the end of `5-securityfindings.md`, include:
 
 ```markdown
 ## Threat Coverage Verification
@@ -440,7 +445,7 @@ Send an unauthenticated GET request to `/api/v1/resources` — should return 401
 | T02.I | — | 🔄 Mitigated by Platform (Azure AD) |
 ```
 
-Every threat from `2-stride-analysis.md` must appear in this table. Status is one of:
+Every threat from `4-stride-analysis.md` must appear in this table. Status is one of:
 - `✅ Covered (FIND-XX)` — finding documents a vulnerability that needs remediation
 - `✅ Mitigated (FIND-XX)` — finding documents an existing control the team built (gives credit for security work done)
 - `🔄 Mitigated by Platform` — external system handles it (only for genuinely external platforms)
@@ -453,12 +458,31 @@ The purpose of this table is to force you to check your work. After filling it o
 
 The table should drive you to 100% coverage: every threat maps to either a finding (`✅ Covered`) or a legitimate external platform mitigation (`🔄 Mitigated by Platform`). There is no third option.
 
+### Pattern References *(OPTIONAL — include only if Step 1.5 pattern matching was performed)*
+
+After the Threat Coverage Verification table, include a Pattern References section that maps components to their matched archetypes and lists which pattern threats were referenced during STRIDE analysis:
+
+```markdown
+## Pattern References
+
+| Component | Matched Archetype | Confidence | Pattern Threats Referenced | Mode |
+|-----------|-------------------|------------|---------------------------|------|
+| DeviceManager | edge-appliance | 0.85 | T-EDGE-001, T-EDGE-003 | Public |
+| UpdateService | edge-appliance | 0.72 | T-EDGE-002 | Public |
+| AuthGateway | api-control-plane | 0.91 | T-API-001, T-API-004 | Internal |
+
+> Patterns derived from anonymized security reviews of similar component types.
+> Pattern matches are advisory — all findings are verified against actual code.
+```
+
+If no archetypes matched with ≥0.4 confidence, omit this section entirely. Do not include an empty table.
+
 **⛔ FINDING GENERATION RULE:**
-If a threat in `2-stride-analysis.md` has a non-empty `Mitigation` column, it MUST become a finding. The mitigation text provides the remediation — use it. The only exception is threats genuinely mitigated by an EXTERNAL platform (Azure AD, K8s RBAC, TPM hardware) that this code cannot disable.
+If a threat in `4-stride-analysis.md` has a non-empty `Mitigation` column, it MUST become a finding. The mitigation text provides the remediation — use it. The only exception is threats genuinely mitigated by an EXTERNAL platform (Azure AD, K8s RBAC, TPM hardware) that this code cannot disable.
 
 ---
 
-## 0-assessment.md
+## 1-assessment.md
 
 **Purpose:** Executive summary, risk rating, action plan, and metadata. The "front page" of the report.
 
@@ -478,23 +502,23 @@ If a threat in `2-stride-analysis.md` has a non-empty `Mitigation` column, it MU
 
 ### Report Files Template
 
-The Report Files table MUST list `0-assessment.md` (this file) as the FIRST row, followed by the other files:
+The Report Files table MUST list `1-assessment.md` (this file) as the FIRST row, followed by the other files:
 
 ```markdown
 ## Report Files
 
 | File | Description |
 |------|-------------|
-| [0-assessment.md](0-assessment.md) | This document — executive summary, risk rating, action plan, metadata |
-| [0.1-architecture.md](0.1-architecture.md) | Architecture overview, components, scenarios, tech stack |
-| [1-threatmodel.md](1-threatmodel.md) | Threat model DFD diagram with element, flow, and boundary tables |
-| [1.1-threatmodel.mmd](1.1-threatmodel.mmd) | Pure Mermaid DFD source file |
-| [1.2-threatmodel-summary.mmd](1.2-threatmodel-summary.mmd) | Summary DFD (only if generated) |
-| [2-stride-analysis.md](2-stride-analysis.md) | Full STRIDE-A analysis for all components |
-| [3-findings.md](3-findings.md) | Prioritized security findings with remediation |
+| [1-assessment.md](1-assessment.md) | This document — executive summary, risk rating, action plan, metadata |
+| [2-architecture.md](2-architecture.md) | Architecture overview, components, scenarios, tech stack |
+| [3-threatmodel.md](3-threatmodel.md) | Threat model DFD diagram with element, flow, and boundary tables |
+| [3.1-threatmodel.mmd](3.1-threatmodel.mmd) | Pure Mermaid DFD source file |
+| [3.2-threatmodel-summary.mmd](3.2-threatmodel-summary.mmd) | Summary DFD (only if generated) |
+| [4-stride-analysis.md](4-stride-analysis.md) | Full STRIDE-A analysis for all components |
+| [5-securityfindings.md](5-securityfindings.md) | Prioritized security findings with remediation |
 ```
 
-⚠️ **`0-assessment.md` MUST be the first row.** The model consistently lists `0.1-architecture.md` first — that is WRONG. This file IS the front page of the report and lists itself first.
+⚠️ **`1-assessment.md` MUST be the first row.** The model consistently lists `2-architecture.md` first — that is WRONG. This file IS the front page of the report and lists itself first.
 
 ### Risk Rating
 
@@ -544,12 +568,12 @@ Include at end of Executive Summary:
 ⚠️ **Quick Wins is a REQUIRED subsection.** The `### Quick Wins` heading and table MUST appear after the tier summary table inside Action Summary. If no low-effort findings exist, write: `### Quick Wins\n\nNo low-effort findings identified. All findings require Medium or High effort.`
 
 **Processing Rules for Action Summary:**
-1. Populate the tier table with actual counts from `3-findings.md` (findings per tier) and `2-stride-analysis.md` (threats per tier from T1/T2/T3 columns in summary table)
+1. Populate the tier table with actual counts from `5-securityfindings.md` (findings per tier) and `4-stride-analysis.md` (threats per tier from T1/T2/T3 columns in summary table)
 2. Quick Wins lists only Tier 1 findings with `Remediation Effort: Low` — highest-impact, lowest-effort items
 3. If no Tier 1 Low-effort findings exist, show Tier 2 Low-effort findings instead, with a note: "No Tier 1 quick wins identified. These Tier 2 items offer the best effort-to-impact ratio:"
 4. If no Low-effort findings exist at all, keep `### Quick Wins` heading and add: `No low-effort findings identified. All findings require Medium or High effort.`
-5. Verify: Findings column sums must equal total findings count in `3-findings.md`
-6. Verify: Threats column sums must equal total threats count in `2-stride-analysis.md` summary table
+5. Verify: Findings column sums must equal total findings count in `5-securityfindings.md`
+6. Verify: Threats column sums must equal total threats count in `4-stride-analysis.md` summary table
 
 ### ⛔ PROHIBITED Content in Action Summary and All Output Files
 
@@ -602,6 +626,46 @@ Include at end of Executive Summary:
 
 [Freeform notes provided by user]
 ```
+
+### Pattern Context Template *(OPTIONAL — include only if Step 1.5 pattern matching was performed)*
+
+After Additional Notes and before References Consulted, include a Pattern Context section if archetype matching was performed:
+
+```markdown
+## Pattern Context
+
+| Component | Matched Archetype | Confidence | Review Questions Surfaced | Threats Hinted |
+|-----------|-------------------|------------|--------------------------|----------------|
+| DeviceManager | edge-appliance | 0.85 | 3 | T-EDGE-001, T-EDGE-003 |
+| UpdateService | edge-appliance | 0.72 | 2 | T-EDGE-002 |
+
+> Archetype patterns are advisory — all findings are verified against actual code.
+> Pattern data derived from anonymized reviews of similar component types.
+```
+
+If no archetypes matched with ≥0.4 confidence, omit this section entirely.
+
+### Institutional Context Template *(OPTIONAL — INTERNAL MODE ONLY — include only if internal-knowledge/ was active)*
+
+After Pattern Context and before References Consulted, include Institutional Context only when internal mode is active. **This section MUST NOT appear in public-mode reports.**
+
+```markdown
+## Institutional Context
+
+### Similar System References
+| Component | Similar System | Archetype | Key Insight | Review Date |
+|-----------|---------------|-----------|-------------|-------------|
+| DeviceManager | [System-A] | edge-appliance | Addressed firmware rollback risk with signed update chain | 2026-02-15 |
+
+### Prior Decisions Applicable
+| Decision | Source System | Relevance to Current Analysis |
+|----------|-------------|-------------------------------|
+| Adopted certificate pinning for device-to-cloud | [System-A] | Same trust boundary pattern applies |
+
+> ⚠️ INTERNAL ONLY — this section references internal system names and must not be published externally.
+```
+
+If internal-knowledge/ was not active or did not pass health checks, omit both subsections entirely.
 
 ### References Consulted Template
 
@@ -657,7 +721,7 @@ Include at end of Executive Summary:
 
 **Gathering rules:**
 - START_TIME: Run `Get-Date -Format "yyyy-MM-dd HH:mm:ss" -AsUTC` at workflow Step 1
-- END_TIME: Run again before writing 0-assessment.md
+- END_TIME: Run again before writing 1-assessment.md
 - Git fields: `git remote get-url origin`, `git branch --show-current`, `git rev-parse --short HEAD`
 - If any command fails → "Unavailable"
 - **NEVER estimate timestamps** from folder names
@@ -666,10 +730,10 @@ Include at end of Executive Summary:
 
 ### Coverage Counts Consistency
 
-Before writing 0-assessment.md:
-- Count elements from `1-threatmodel.md` Element Table
-- Count findings from `3-findings.md`
-- Count threats from `2-stride-analysis.md` summary table
+Before writing 1-assessment.md:
+- Count elements from `3-threatmodel.md` Element Table
+- Count findings from `5-securityfindings.md`
+- Count threats from `4-stride-analysis.md` summary table
 - Use these exact numbers in Executive Summary and Action Summary
 
 ### Formatting Rules
@@ -678,7 +742,7 @@ Before writing 0-assessment.md:
 2. Report Metadata values all wrapped in backticks
 3. Finding Overrides always uses table format (even when empty)
 4. Report Files section always first
-5. `0.1-architecture.md` always listed in Report Files table
+5. `2-architecture.md` always listed in Report Files table
 
 ---
 
@@ -700,13 +764,13 @@ These are the most observed deviations. Check after writing each file:
 12. ❌ Missing CVSS 4.0 vector string → ✅ Every finding MUST have both score AND full vector (e.g., `CVSS:4.0/AV:N/AC:L/...`)
 13. ❌ Missing CWE or OWASP on findings → ✅ MANDATORY on every finding
 14. ❌ Using OWASP `:2021` suffix → ✅ ALWAYS use `:2025` (e.g., `A01:2025 – Broken Access Control`). The 2025 edition is current.
-15. ❌ Missing Threat Coverage Verification table → ✅ Required at end of `3-findings.md`
-16. ❌ Architecture component not in STRIDE analysis → ✅ Every component in 0.1-architecture.md must have a STRIDE section
-17. ❌ Missing sequence diagrams for top scenarios → ✅ First 3 scenarios in 0.1-architecture.md MUST have Mermaid sequence diagrams
-18. ❌ Missing Needs Verification section in 0-assessment.md → ✅ Include under Analysis Context & Assumptions
+15. ❌ Missing Threat Coverage Verification table → ✅ Required at end of `5-securityfindings.md`
+16. ❌ Architecture component not in STRIDE analysis → ✅ Every component in 2-architecture.md must have a STRIDE section
+17. ❌ Missing sequence diagrams for top scenarios → ✅ First 3 scenarios in 2-architecture.md MUST have Mermaid sequence diagrams
+18. ❌ Missing Needs Verification section in 1-assessment.md → ✅ Include under Analysis Context & Assumptions
 19. ❌ Missing `## Analysis Context & Assumptions` section entirely → ✅ REQUIRED. Previous iterations skipped this section. Must include Scope, Needs Verification, and Finding Overrides sub-tables.
 20. ❌ Missing `### Quick Wins` subsection → ✅ REQUIRED under Action Summary. List Tier 1 low-effort findings; if none, include heading with note.
-21. ❌ Skipping `## Report Files`, `## References Consulted`, or `## Report Metadata` → ✅ ALL 7 sections in 0-assessment.md are MANDATORY. Never omit any.
+21. ❌ Skipping `## Report Files`, `## References Consulted`, or `## Report Metadata` → ✅ ALL 7 sections in 1-assessment.md are MANDATORY. Never omit any.
 22. ❌ Finding IDs out of order (FIND-06 before FIND-04) → ✅ Finding IDs MUST be sequential top-to-bottom: FIND-01, FIND-02, FIND-03, ... Renumber after sorting.
 23. ❌ CWE without hyperlink → ✅ CWE MUST include hyperlink: `[CWE-306](https://cwe.mitre.org/data/definitions/306.html): Missing Authentication for Critical Function`
 24. ❌ Time estimates or scheduling in output → ✅ NEVER generate `~1 hour`, `Sprint 1-2`, `Phase 1 — Immediate`, `(hours)`, or any timeline/duration in ANY output file. The report says WHAT to fix, not WHEN.
@@ -720,7 +784,7 @@ This file enables automated comparison between two threat model runs.
 
 **When to generate:** Every run (Step 8b). Generated AFTER all markdown files are written.
 
-**NOT linked in `0-assessment.md`** — this is a machine-readable artifact, not a human-readable report file.
+**NOT linked in `1-assessment.md`** — this is a machine-readable artifact, not a human-readable report file.
 
 ### Schema
 
@@ -840,6 +904,20 @@ This file enables automated comparison between two threat model runs.
     "findings_by_tier": { "T1": 7, "T2": 7, "T3": 4 },
     "findings_by_severity": { "Critical": 4, "Important": 8, "Moderate": 6 },
     "threats_by_stride": { "S": 14, "T": 19, "R": 8, "I": 20, "D": 15, "E": 14, "A": 7 }
+  },
+
+  "pattern_context": {
+    "format_version": "2.0",
+    "archetypes_matched": [
+      {
+        "id": "edge-appliance",
+        "confidence": 0.85,
+        "components_matched": ["DeviceManager", "UpdateService"],
+        "pattern_threats_referenced": ["T-EDGE-001", "T-EDGE-003"]
+      }
+    ],
+    "mode": "public",
+    "internal_systems_referenced": []
   }
 }
 ```
@@ -986,13 +1064,13 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 5. All threat and finding identity keys must reference actual code artifacts (file paths, config keys)
 6. Include git metadata from Step 1 (commit, branch, date)
 7. The `metrics` object must match the counts in the markdown reports
-8. This file is NOT listed in the Report Files table of `0-assessment.md`
+8. This file is NOT listed in the Report Files table of `1-assessment.md`
 9. Populate `aliases`, `boundary_kind`/`kind`, `fingerprint`, and `contains_fingerprint` for deterministic matching
 10. If a component has multiple observed names in the same run, keep one canonical `id` and store all alternates in `aliases`
 
 > **⚠️ CRITICAL — Array completeness:**
-> The `threats` array MUST contain one entry for every threat listed in `2-stride-analysis.md`.
-> The `findings` array MUST contain one entry for every finding in `3-findings.md`.
+> The `threats` array MUST contain one entry for every threat listed in `4-stride-analysis.md`.
+> The `findings` array MUST contain one entry for every finding in `5-securityfindings.md`.
 > The `components` array MUST contain one entry for every component in the Element Table.
 > **Verify:** `threats.length == metrics.total_threats`, `findings.length == metrics.total_findings`,
 > `components.length == metrics.total_components`. If mismatched, the JSON is incomplete — go back
@@ -1004,14 +1082,14 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 
 ⛔ **MANDATORY:** After writing each file, verify these checks and report results. Fix any ❌ before proceeding.
 
-### After `2-stride-analysis.md`:
+### After `4-stride-analysis.md`:
 - [ ] Summary table appears BEFORE individual component sections
 - [ ] 3 tier sub-sections per component (Tier 1, Tier 2, Tier 3)
 - [ ] Status column uses only: `Open`, `Mitigated`, `Platform` (no `Accepted Risk`, no `Needs Review`)
 - [ ] Platform ratio within limit (≤20% standalone, ≤35% K8s operator)
 - [ ] Every threat has single-letter STRIDE category (S/T/R/I/D/E/A)
 
-### After `3-findings.md`:
+### After `5-securityfindings.md`:
 - [ ] 3 tier headings: `## Tier 1`, `## Tier 2`, `## Tier 3` (all present)
 - [ ] Zero occurrences of "Accepted Risk" anywhere in the file
 - [ ] Every finding has CVSS 4.0 vector string
@@ -1026,7 +1104,7 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 - [ ] Arrays sorted by canonical key
 - [ ] **Field names match schema exactly:** components use `display` (NOT `display_name`), threats use `stride_category` (NOT `category`), threat→component link is inside `identity_key.component_id` (NOT top-level `component_id`), threats have BOTH `title` (short name) AND `description` (longer prose) — NOT just `description` alone
 
-### After `0-assessment.md`:
+### After `1-assessment.md`:
 - [ ] Exactly 7 sections: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions, References Consulted, Report Metadata, Classification Reference
 - [ ] `---` horizontal rule between every pair of `##` sections
 

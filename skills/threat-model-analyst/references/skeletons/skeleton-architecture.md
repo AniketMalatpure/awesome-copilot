@@ -1,4 +1,4 @@
-# Skeleton: 0.1-architecture.md
+# Skeleton: 2-architecture.md
 
 > **⛔ Copy the template content below VERBATIM (excluding the outer code fence). Replace `[FILL]` placeholders. Do NOT add/rename/reorder sections.**
 > **⛔ Key Components table columns are EXACTLY: `Component | Type | Description`. DO NOT rename to `Role`, `Change`, `Function`.**
@@ -9,6 +9,11 @@
 
 ````markdown
 # Architecture Overview
+
+[TOC: Generate a flat bullet list of all `## ` headings in this file as Markdown anchor links. Example:
+- [System Purpose](#system-purpose)
+- [Key Components](#key-components)
+- ...one entry per `## ` heading in the final file.]
 
 ## System Purpose
 

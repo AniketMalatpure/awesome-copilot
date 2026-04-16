@@ -127,6 +127,20 @@
     "findings_by_tier": { "T1": [FILL], "T2": [FILL], "T3": [FILL] },
     "threats_by_stride": { "S": [FILL], "T": [FILL], "R": [FILL], "I": [FILL], "D": [FILL], "E": [FILL], "A": [FILL] },
     "findings_by_severity": { "Critical": [FILL], "Important": [FILL], "Moderate": [FILL], "Low": [FILL] }
+  },
+
+  "pattern_context": {
+    "format_version": "2.0",
+    "archetypes_matched": [
+      {
+        "id": "[FILL: archetype-id]",
+        "confidence": [FILL: 0.XX],
+        "components_matched": ["[FILL: ComponentId]"],
+        "pattern_threats_referenced": ["[FILL: T-ARCH-NNN]"]
+      }
+    ],
+    "mode": "[FILL: public or internal]",
+    "internal_systems_referenced": []
   }
 }
 ```
@@ -137,3 +151,10 @@
 - `"title"` AND `"description"` — both required on every threat
 - `identity_key.component_id` — component link INSIDE identity_key, NOT top-level
 - Sort all arrays deterministically before writing
+
+**Optional `pattern_context` object:**
+- Include only if Step 1.5 pattern matching was performed
+- `format_version` must be `"2.0"`
+- `mode` must be `"public"` or `"internal"`
+- If mode is `"public"`, `internal_systems_referenced` must be an empty array
+- If Step 1.5 was not performed, omit the entire `pattern_context` object

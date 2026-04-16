@@ -8,13 +8,14 @@ It is the primary workflow document for the `/threat-model-analyst` skill.
 **Do NOT read all 10 skill files at session start.** Read only what each phase needs. This preserves context window for the actual codebase analysis.
 
 **Phase 1 (context gathering):** Read this file (`orchestrator.md`) + `analysis-principles.md` + `tmt-element-taxonomy.md`
+**Phase 1.5 (pattern matching — MANDATORY before Phase 2):** Read `security-patterns/patterns-manifest.json` + `knowledge-integration.md` + matched archetype `.md` files from `security-patterns/archetypes/`. This phase MUST complete before writing any output files. See Rules 35–36.
 **Phase 2 (writing reports):** Read the relevant skeleton from `skeletons/` BEFORE writing each file. Read `output-formats.md` + `diagram-conventions.md` for rules — but use the skeleton as the structural template.
-- Before `0.1-architecture.md`: read `skeletons/skeleton-architecture.md`
-- Before `1.1-threatmodel.mmd`: read `skeletons/skeleton-dfd.md`
-- Before `1-threatmodel.md`: read `skeletons/skeleton-threatmodel.md`
-- Before `2-stride-analysis.md`: read `skeletons/skeleton-stride-analysis.md`
-- Before `3-findings.md`: read `skeletons/skeleton-findings.md`
-- Before `0-assessment.md`: read `skeletons/skeleton-assessment.md`
+- Before `2-architecture.md`: read `skeletons/skeleton-architecture.md`
+- Before `3.1-threatmodel.mmd`: read `skeletons/skeleton-dfd.md`
+- Before `3-threatmodel.md`: read `skeletons/skeleton-threatmodel.md`
+- Before `4-stride-analysis.md`: read `skeletons/skeleton-stride-analysis.md`
+- Before `5-securityfindings.md`: read `skeletons/skeleton-findings.md`
+- Before `1-assessment.md`: read `skeletons/skeleton-assessment.md`
 - Before `threat-inventory.json`: read `skeletons/skeleton-inventory.md`
 - Before `incremental-comparison.html`: read `skeletons/skeleton-incremental-html.md`
 **Phase 3 (verification):** Delegate to a sub-agent and include `verification-checklist.md` in the sub-agent prompt. The sub-agent reads the full checklist with a fresh context window — the parent agent does NOT need to read it.
@@ -41,27 +42,31 @@ These are the required behaviors for every threat model report. Follow each rule
 11. Include `> **Note on threat counts:**` blockquote in Executive Summary
 12. Every finding MUST have CVSS 4.0 (score AND full vector string), CWE (with hyperlink), and OWASP (`:2025` suffix)
 13. OWASP suffix is always `:2025` (e.g., `A01:2025 – Broken Access Control`)
-14. Include Threat Coverage Verification table at end of `3-findings.md` mapping every threat → finding
-15. Every component in `0.1-architecture.md` MUST appear in `2-stride-analysis.md`
-16. First 3 scenarios in `0.1-architecture.md` MUST have Mermaid sequence diagrams
-17. `0-assessment.md` MUST include `## Analysis Context & Assumptions` with `### Needs Verification` and `### Finding Overrides` tables
+14. Include Threat Coverage Verification table at end of `5-securityfindings.md` mapping every threat → finding
+15. Every component in `2-architecture.md` MUST appear in `4-stride-analysis.md`
+16. First 3 scenarios in `2-architecture.md` MUST have Mermaid sequence diagrams
+17. `1-assessment.md` MUST include `## Analysis Context & Assumptions` with `### Needs Verification` and `### Finding Overrides` tables
 18. `### Quick Wins` subsection is REQUIRED under Action Summary (include heading with note if none)
-19. ALL 7 sections in `0-assessment.md` are MANDATORY: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions, References Consulted, Report Metadata, Classification Reference
-20. **Deployment Classification is BINDING.** In `0.1-architecture.md`, set `Deployment Classification` and fill the Component Exposure Table. If classification is `LOCALHOST_DESKTOP` or `LOCALHOST_SERVICE`: zero T1 findings, zero `Prerequisites = None`, zero `AV:N` for non-listener components. See `analysis-principles.md` Deployment Context table.
+19. ALL 7 sections in `1-assessment.md` are MANDATORY: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions, References Consulted, Report Metadata, Classification Reference
+20. **Deployment Classification is BINDING.** In `2-architecture.md`, set `Deployment Classification` and fill the Component Exposure Table. If classification is `LOCALHOST_DESKTOP` or `LOCALHOST_SERVICE`: zero T1 findings, zero `Prerequisites = None`, zero `AV:N` for non-listener components. See `analysis-principles.md` Deployment Context table.
 21. Finding IDs MUST be sequential top-to-bottom: FIND-01, FIND-02, FIND-03... Renumber after sorting
 22. CWE MUST include hyperlink: `[CWE-306](https://cwe.mitre.org/data/definitions/306.html): Missing Authentication`
 23. After STRIDE, run the Technology-Specific Security Checklist in `analysis-principles.md`. Every technology in the repo needs at least one finding or documented mitigation
 24. CVSS `AV:L` or `PR:H` → finding CANNOT be Tier 1. Downgrade to T2/T3. See CVSS-to-Tier Consistency Check in `analysis-principles.md`
 25. Use only `Low`/`Medium`/`High` effort labels. NEVER generate time estimates, sprint phases, or scheduling. See Prohibited Content in `output-formats.md`
 26. References Consulted: use the exact two-subsection format from `output-formats.md` — `### Security Standards` (3-column table with full URLs) and `### Component Documentation` (3-column table with URLs)
-27. Report Metadata: include ALL fields from `output-formats.md` template — Model, Analysis Started, Analysis Completed, Duration. Run `Get-Date -Format "yyyy-MM-dd HH:mm:ss" -AsUTC` at Step 1 and before writing `0-assessment.md`
-28. `## Summary` table in `2-stride-analysis.md` MUST appear at the TOP, immediately after `## Exploitability Tiers`, BEFORE individual component sections
-29. Related Threats: every threat ID MUST be a hyperlink to `2-stride-analysis.md#component-anchor`. Format: `[T02.S](2-stride-analysis.md#component-name)`
+27. Report Metadata: include ALL fields from `output-formats.md` template — Model, Analysis Started, Analysis Completed, Duration. Run `Get-Date -Format "yyyy-MM-dd HH:mm:ss" -AsUTC` at Step 1 and before writing `1-assessment.md`
+28. `## Summary` table in `4-stride-analysis.md` MUST appear at the TOP, immediately after `## Exploitability Tiers`, BEFORE individual component sections
+29. Related Threats: every threat ID MUST be a hyperlink to `4-stride-analysis.md#component-anchor`. Format: `[T02.S](4-stride-analysis.md#component-name)`
 30. Diagram colors: copy classDef lines VERBATIM from `diagram-conventions.md`. Only allowed fills: `#6baed6` (process), `#fdae61` (external), `#74c476` (datastore). Only allowed strokes: `#2171b5`, `#d94701`, `#238b45`, `#e31a1c`. Use ONLY `%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#ffffff', 'lineColor': '#666666' }}}%%` — no other themeVariables keys
-31. Summary DFD: after creating `1.1-threatmodel.mmd`, run the POST-DFD GATE in Step 4. The gate and `skeleton-summary-dfd.md` control whether `1.2-threatmodel-summary.mmd` is generated.
-32. Report Files table in `0-assessment.md`: list `0-assessment.md` (this document) as the FIRST row, followed by 0.1-architecture.md, 1-threatmodel.md, etc. Use the exact template from `output-formats.md`
+31. Summary DFD: after creating `3.1-threatmodel.mmd`, run the POST-DFD GATE in Step 4. The gate and `skeleton-summary-dfd.md` control whether `3.2-threatmodel-summary.mmd` is generated.
+32. Report Files table in `1-assessment.md`: list `1-assessment.md` (this document) as the FIRST row, followed by 2-architecture.md, 3-threatmodel.md, etc. Use the exact template from `output-formats.md`
 33. `threat-inventory.json` MUST be generated for every analysis run (Step 8b). This file enables future comparisons. See `output-formats.md` for schema.
 34. **NEVER delete, modify, or remove any existing `threat-model-*` or `threat-model-compare-*` folders** in the repository. Only write to your own timestamped output folder. Cleaning up temporary git worktrees you created is allowed; deleting other report folders is FORBIDDEN.
+35. **Step 1.5 (Security Pattern Matching) is MANDATORY.** You MUST attempt to read `security-patterns/patterns-manifest.json` (sibling to this file) before writing ANY output file. The ONLY valid skip reason is "file not found". Record the outcome (archetypes matched or "file not found") as `STEP_1_5_RESULT` — this value is checked by the PRE-WRITE GATE in Step 2. If you cannot produce `STEP_1_5_RESULT`, you have not completed Step 1.5.
+36. **Step 7c (Security Review Questions) is MANDATORY.** You MUST attempt to read `security-review-questions.md` (sibling to this file) before writing `5-securityfindings.md`. The ONLY valid skip reason is "file not found". Record the outcome (question count mapped or "file not found") as `STEP_7C_RESULT` — this value is checked by the PRE-WRITE GATE in Step 8. If you cannot produce `STEP_7C_RESULT`, you have not completed Step 7c.
+37. **Step 1.5d (Internal Knowledge Lookup) is MANDATORY when the directory exists.** You MUST attempt to check whether `../internal-knowledge/internal-manifest.json` exists (relative to this file) during Step 1.5. If the file exists, run ALL 6 health checks from `knowledge-integration.md` § Internal Mode Gating. Record the outcome as `INTERNAL_MODE_RESULT` — one of: `"active: N systems loaded from M archetypes"`, `"inactive: health check failed — [reason]"`, or `"inactive: directory not found"`. This value is checked by the PRE-STEP-2 GATE. If internal mode is active, `1-assessment.md` MUST include an `## Institutional Context` section and `threat-inventory.json` MUST have `pattern_context.mode` = `"internal"`. If you cannot produce `INTERNAL_MODE_RESULT`, you have not completed Step 1.5d.
+38. **Every output `.md` file MUST begin with a Table of Contents (TOC)** immediately after the `# ` title heading. The TOC lists all `## ` sections in that file as Markdown anchor links (e.g., `- [Executive Summary](#executive-summary)`). Generate the TOC from the actual `## ` headings present in the file. The TOC uses a flat bullet list — do NOT nest sub-sections. Each skeleton file includes a `[TOC]` placeholder showing where to insert it. This rule applies to: `1-assessment.md`, `2-architecture.md`, `3-threatmodel.md`, `4-stride-analysis.md`, `5-securityfindings.md`.
 
 ### Rule Precedence (when guidance conflicts)
 
@@ -82,13 +87,15 @@ If any conflict is detected, follow the highest-precedence item.
 - `threat-model-*` (previous reports)
 - `node_modules`, `.git`, `dist`, `build`, `vendor`, `__pycache__`
 
-**Pre-work:** Before writing any output file, scan `verification-checklist.md` Phase 1 (Per-File Structural Checks) and Phase 2 (Diagram Rendering Checks). This internalizes the quality gates so output is correct on the first pass — preventing costly rework. Do NOT run the full verification yet; that happens in Step 10.
+**Pre-work:** Before writing any output file:
+1. Scan `verification-checklist.md` Phase 1 (Per-File Structural Checks) and Phase 2 (Diagram Rendering Checks). This internalizes the quality gates so output is correct on the first pass — preventing costly rework. Do NOT run the full verification yet; that happens in Step 10.
+2. **Confirm Step 1.5 (Security Pattern Matching) is complete** — you MUST have a `STEP_1_5_RESULT` AND an `INTERNAL_MODE_RESULT` before creating any output file. See Rules 35 and 37. These are the most frequently skipped steps in observed runs.
 
 ### ⛔ Sub-Agent Governance (MANDATORY — prevents duplicate work)
 
 Sub-agents are **independent execution contexts** — they have no memory of the parent's state, instructions, or other sub-agents. Without strict governance, sub-agents will independently perform the ENTIRE analysis, creating duplicate report folders and wasting ~15 min compute + ~100K tokens per duplication.
 
-**Rule 1 — Parent owns ALL file creation.** The parent agent is the ONLY agent that calls `create_file` for report files (0.1-architecture.md, stride-analysis.md, findings.md, etc.). Sub-agents NEVER write report files.
+**Rule 1 — Parent owns ALL file creation.** The parent agent is the ONLY agent that calls `create_file` for report files (2-architecture.md, stride-analysis.md, findings.md, etc.). Sub-agents NEVER write report files.
 
 **Rule 2 — Sub-agents are READ-ONLY helpers.** Sub-agents may:
 - Search source code for specific patterns (e.g., "find all auth-related code")
@@ -101,7 +108,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 - ✅ "Run the verification checklist against the files in {folder}. Return PASS/FAIL for each check."
 - ✅ "Read threat-inventory.json from {path} and verify all array lengths match metrics. Return mismatches."
 - ❌ "Analyze this codebase and write the threat model files."
-- ❌ "Generate 0.1-architecture.md and stride-analysis.md for this component."
+- ❌ "Generate 2-architecture.md and stride-analysis.md for this component."
 
 **Rule 4 — Output folder path.** The parent creates the timestamped output folder in Step 1 and uses that exact path for ALL `create_file` calls. If a sub-agent needs to read previously written report files, pass the folder path in the sub-agent prompt.
 
@@ -117,7 +124,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 
    **⛔ DEPLOYMENT CLASSIFICATION (MANDATORY — do this BEFORE analyzing code for threats):**
    Determine the system's deployment class from code evidence (see `skeleton-architecture.md` for values).
-   Record in `0.1-architecture.md` → Deployment Model section. Then fill the **Component Exposure Table** — one row per component showing listen address, auth barrier, external reachability, and minimum prerequisite.
+   Record in `2-architecture.md` → Deployment Model section. Then fill the **Component Exposure Table** — one row per component showing listen address, auth barrier, external reachability, and minimum prerequisite.
    This table is the **single source of truth** for prerequisite floors. No threat or finding may have a lower prerequisite than what the exposure table permits for its component.
 
    **⛔ DETERMINISTIC NAMING — Apply BEFORE writing any files:**
@@ -332,10 +339,10 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    **⛔ COMPONENT ID FORMAT (MANDATORY — addresses casing variance):**
    - ALL component IDs MUST be PascalCase. NEVER use kebab-case, snake_case, or camelCase.
    - Examples: `HealthAgent` (not `health-agent`), `AzureAD` (not `azure-ad`), `MCPHost` (not `mcp-host`)
-   - This applies to ALL artifacts: 0.1-architecture.md, 1-threatmodel.md, DFD mermaid, STRIDE, findings, JSON.
+   - This applies to ALL artifacts: 2-architecture.md, 3-threatmodel.md, DFD mermaid, STRIDE, findings, JSON.
 
    **⛔ STRIDE SCOPE RULE (addresses external entity analysis variance):**
-   - STRIDE analysis in `2-stride-analysis.md` MUST include sections for ALL elements in the Element Table EXCEPT external actors (Operator, EndUser).
+   - STRIDE analysis in `4-stride-analysis.md` MUST include sections for ALL elements in the Element Table EXCEPT external actors (Operator, EndUser).
    - External services (AzureOpenAI, AzureAD, OnPremInfra) DO get STRIDE sections — they are attack surfaces from YOUR system's perspective.
    - External actors (human users) do NOT get STRIDE sections — they are threat SOURCES, not targets.
    - This means: if you have 20 elements total and 1 is an external actor, you write 19 STRIDE sections.
@@ -349,7 +356,55 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - The Summary table S/T/R/I/D/E/A columns show the COUNT of concrete threats per category (0 is valid if N/A was justified).
    - This ensures comprehensive coverage while producing accurate, non-inflated threat counts.
 
-2. **Write architecture overview** (`0.1-architecture.md`)
+   **→ After locking components, proceed to Step 1.5 for security pattern matching before writing any files.**
+
+1. **Security Pattern Matching** *(⛔ ALWAYS ATTEMPT — skip ONLY if the file read for `security-patterns/patterns-manifest.json` returns "file not found")*
+
+   **⛔ DO NOT SKIP THIS STEP without first attempting to read the manifest file.** The patterns significantly improve STRIDE coverage and finding quality. Read `knowledge-integration.md` for full matching rules. Summary:
+
+   a. **Load manifest:** Read `security-patterns/patterns-manifest.json` to get the archetype index with tech indicators.
+
+   b. **Match components to archetypes:** For each component identified in Step 1, match against archetype tech indicators using the hybrid matching approach:
+      - Coarse filter: count matching tech indicators per archetype
+      - LLM rerank: assess whether the match is genuine (purpose alignment, not incidental)
+      - Score: ≥0.7 = strong match, 0.4–0.7 = secondary reference, <0.4 = abstain
+      - No cap on matched archetypes — load ALL that meet the ≥0.4 threshold
+
+   c. **Load archetype files:** For each matched archetype, read the full `.md` file from `security-patterns/archetypes/`. Extract:
+      - Review questions → surface during STRIDE analysis to ensure coverage
+      - Common threat patterns → use as hints (NOT auto-include — must verify in code)
+      - Decision patterns → reference in findings remediation sections
+      - Acceptable risk patterns → flag in assessment if same conditions apply
+
+   d. **Internal mode (⛔ MANDATORY ATTEMPT — skip ONLY if directory `../internal-knowledge/` does not exist):**
+      1. Check if `../internal-knowledge/internal-manifest.json` exists. If the directory does not exist → record `INTERNAL_MODE_RESULT = "inactive: directory not found"` and proceed to step (e).
+      2. If the file exists, run ALL 6 health checks from `knowledge-integration.md` § Internal Mode Gating (status, schema_version, generated_at ≤ 30 days, source_count > 0).
+      3. If ANY health check fails → record `INTERNAL_MODE_RESULT = "inactive: health check failed — [which check]"` and proceed to step (e).
+      4. If ALL health checks pass → internal mode is ACTIVE:
+         - Read `archetype_systems` from the manifest
+         - For each matched archetype (from step b), find similar internal systems
+         - Load top-3 most similar systems above similarity threshold 0.5
+         - Extract applicable threats, decisions, and accepted risks
+         - Record `INTERNAL_MODE_RESULT = "active: N systems loaded from M archetypes"`
+      5. When internal mode is active, the following output sections are REQUIRED:
+         - `1-assessment.md` → `## Institutional Context` section (see `output-formats.md` Institutional Context Template)
+         - `threat-inventory.json` → `pattern_context.mode` = `"internal"` and `internal_systems_referenced` populated
+
+   e. **Record pattern context:** Note the matched archetypes and confidence scores for inclusion in output files (Pattern References in findings, Pattern Context in assessment, `pattern_context` in threat-inventory.json).
+
+   **⛔ Pattern context is advisory — it enriches STRIDE analysis and findings but does NOT override code-based evidence.** All threats still require code verification per `analysis-principles.md` "Verify Before Flagging" rules. Never include a pattern threat without confirming the condition exists in the code.
+
+   ⛔ **PRE-STEP-2 GATE (MANDATORY — blocks ALL file writing until Step 1.5 is done):**
+   Before proceeding to Step 2 or writing ANY output file, verify:
+   1. You have a `STEP_1_5_RESULT` value (either matched archetypes with confidence scores, or "file not found")
+   2. If `STEP_1_5_RESULT` is missing → STOP. Go back and execute Step 1.5 NOW.
+   3. If `patterns-manifest.json` was found and archetypes were matched, confirm you read at least one archetype `.md` file.
+   4. You have an `INTERNAL_MODE_RESULT` value (one of: `"active: ..."`, `"inactive: health check failed — ..."`, or `"inactive: directory not found"`)
+   5. If `INTERNAL_MODE_RESULT` is missing → STOP. Go back and execute Step 1.5d NOW.
+   6. If `INTERNAL_MODE_RESULT` starts with `"active"`, confirm you loaded at least one system JSON from `../internal-knowledge/systems/`.
+   **This gate exists because Steps 1.5, 1.5d, and 7c are the most-skipped steps in observed runs.** They are not optional enrichment — they are mandatory workflow steps. Internal mode catches institutional patterns that pure archetype matching misses.
+
+2. **Write architecture overview** (`2-architecture.md`)
    - **Read `skeletons/skeleton-architecture.md` first** — copy skeleton structure, fill `[FILL]` placeholders
    - System purpose, key components, top scenarios, tech stack, deployment
    - **Use the exact component IDs locked in Step 1** — do not rename or merge components
@@ -359,24 +414,24 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - Identify security-enabling components before flagging gaps
    - **Reference:** `analysis-principles.md` Security Infrastructure Inventory table
 
-4. **Produce threat model DFD** (`1.1-threatmodel.mmd`, `1.2-threatmodel-summary.mmd`, `1-threatmodel.md`)
+4. **Produce threat model DFD** (`3.1-threatmodel.mmd`, `3.2-threatmodel-summary.mmd`, `3-threatmodel.md`)
    - **Read `skeletons/skeleton-dfd.md`, `skeletons/skeleton-summary-dfd.md`, and `skeletons/skeleton-threatmodel.md` first**
    - **Reference:** `diagram-conventions.md` for DFD styles, `tmt-element-taxonomy.md` for element classification
    - ⚠️ **BEFORE FINALIZING:** Run the Pre-Render Checklist from `diagram-conventions.md`
 
-   ⛔ **POST-DFD GATE — Run IMMEDIATELY after creating `1.1-threatmodel.mmd`:**
-   1. Count elements (nodes with `((...))`, `[(...)`, `["..."]`) in `1.1-threatmodel.mmd`
+   ⛔ **POST-DFD GATE — Run IMMEDIATELY after creating `3.1-threatmodel.mmd`:**
+   1. Count elements (nodes with `((...))`, `[(...)`, `["..."]`) in `3.1-threatmodel.mmd`
    2. Count boundaries (`subgraph` lines)
    3. If elements > 15 OR boundaries > 4:
-      → You MUST create `1.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW
-      → Do NOT proceed to `1-threatmodel.md` until the summary file exists
-   4. If threshold NOT met → skip summary, proceed to `1-threatmodel.md`
-   5. Create `1-threatmodel.md` (include Summary View section if summary was generated)
+      → You MUST create `3.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW
+      → Do NOT proceed to `3-threatmodel.md` until the summary file exists
+   4. If threshold NOT met → skip summary, proceed to `3-threatmodel.md`
+   5. Create `3-threatmodel.md` (include Threat Model section if summary was generated). Section order: Threat Model (if applicable) → Expanded Threat Model → [placeholder for Security Review Questions from Step 7c] → Basic to Expanded Threat Model Mapping (if applicable) → Element Table → Data Flow Table → Trust Boundary Table. If no summary diagram was generated, omit Threat Model and Basic to Expanded Threat Model Mapping, and start with Expanded Threat Model. See `output-formats.md` for the template.
 
-5. **Enumerate threats** per element and flow using STRIDE-A (`2-stride-analysis.md`)
+5. **Enumerate threats** per element and flow using STRIDE-A (`4-stride-analysis.md`)
    - **Read `skeletons/skeleton-stride-analysis.md` first** — use Summary table and per-component structure
    - **Reference:** `analysis-principles.md` for tier definitions, `output-formats.md` for STRIDE template
-   - **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`0.1-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier (i.e., if component is T2, no threat can be T1). Use the canonical prerequisite→tier mapping from `analysis-principles.md`.
+   - **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`2-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier (i.e., if component is T2, no threat can be T1). Use the canonical prerequisite→tier mapping from `analysis-principles.md`.
 
 6. **For each threat:** cite files/functions/endpoints, propose mitigations, provide verification steps
 
@@ -386,20 +441,45 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 7b. **Technology sweep** — Run the Technology-Specific Security Checklist from `analysis-principles.md`
    - For every technology found in the repo (Redis, Milvus, PostgreSQL, Docker, K8s, ML models, LLMs, NFS, CI/CD, etc.), verify you have at least one finding or explicit mitigation
    - This step catches gaps that component-level STRIDE misses (e.g., database auth defaults, container hardening, key management)
-   - Add any missing findings before proceeding to Step 8
+   - Add any missing findings before proceeding to Step 7c
 
-8. **Compile findings** (`3-findings.md`)
+7c. **Security Review Questions** *(⛔ ALWAYS ATTEMPT — skip ONLY if the file read for `security-review-questions.md` returns "file not found")*
+
+   Read `security-review-questions.md`. This contains 80+ categorized questions derived from real security review meetings. Map them to the current system:
+
+   a. **Filter by archetype tags:** Using the archetype matches from Step 1.5 (or by manually assessing component types), select questions whose archetype tags match the system's components. Also include questions tagged `all`.
+
+   b. **Answer from code:** For each selected question, attempt to answer from code evidence found during Steps 1–7b. Cite specific files, configurations, or code patterns.
+
+   c. **Flag gaps:** Questions that cannot be answered from code get status 🔍 with a specific prompt for the team (e.g., "Team to confirm: Is key rotation automated or manual?").
+
+   d. **Cross-check findings:** Every ❌ (critical gap) answer should have a corresponding finding in `5-securityfindings.md`. If a gap was discovered here but not in STRIDE, add it as a finding.
+
+   e. **Insert into `3-threatmodel.md`:** Add the mapped Q&A as a `## Security Review Questions` section in `3-threatmodel.md`, placed **after the Threat Model / Expanded Threat Model diagrams and before the Element Table**. This gives reviewers the high-level questions and answers before they dive into element-level details. Follow the output format in `security-review-questions.md`.
+      - Group the questions under area-specific `###` headings that follow the question-library categories.
+      - Use one table per area rather than a single flat table for all questions.
+      - Omit empty areas; include only categories that have at least one mapped question.
+
+   ⛔ **PRE-STEP-8 GATE (MANDATORY — blocks findings compilation until Step 7c is done):**
+   Before proceeding to Step 8, verify:
+   1. You have a `STEP_7C_RESULT` value (either mapped question count, or "file not found")
+   2. If `STEP_7C_RESULT` is missing → STOP. Go back and execute Step 7c NOW.
+   3. If `security-review-questions.md` was found, confirm the `## Security Review Questions` section exists in `3-threatmodel.md`.
+   4. If any ❌ answers were found in Step 7c, confirm they are queued as findings for Step 8.
+   **This gate exists because Step 7c is the #1 most-skipped step in observed runs.** It catches auth gaps, secret management issues, and operational blind spots that STRIDE alone misses.
+
+8. **Compile findings** (`5-securityfindings.md`)
    - **Reference:** `output-formats.md` for findings template and Related Threats link format
    - **Reference:** `skeletons/skeleton-findings.md` — read this skeleton, copy VERBATIM, fill in `[FILL]` placeholders for each finding
 
-   ⛔ **PRE-WRITE GATE — Verify before calling `create_file` for `3-findings.md`:**
+   ⛔ **PRE-WRITE GATE — Verify before calling `create_file` for `5-securityfindings.md`:**
    1. Finding IDs: `### FIND-01:`, `### FIND-02:` — sequential, `FIND-` prefix (NOT `F01` or `F-01`)
    2. CVSS prefix: every vector starts with `CVSS:4.0/` (NOT bare `AV:N/AC:L/...`)
-   3. Related Threats: each threat ID is a separate hyperlink `[TNN.X](2-stride-analysis.md#anchor)` (NOT plain text)
+   3. Related Threats: each threat ID is a separate hyperlink `[TNN.X](4-stride-analysis.md#anchor)` (NOT plain text)
    4. Sub-sections: `#### Description`, `#### Evidence`, `#### Remediation`, `#### Verification` (NOT `Recommendation`)
    5. Sort: within each tier → Critical → Important → Moderate → Low → higher CVSS first
    6. All 10 mandatory attribute rows present per finding
-   7. **Deployment context gate (FAIL-CLOSED):** Read `0.1-architecture.md` Deployment Classification and Component Exposure Table.
+   7. **Deployment context gate (FAIL-CLOSED):** Read `2-architecture.md` Deployment Classification and Component Exposure Table.
       If classification is `LOCALHOST_DESKTOP` or `LOCALHOST_SERVICE`:
       - ZERO findings may have `Exploitation Prerequisites` = `None` → fix to `Local Process Access` (T2) or `Host/OS Access` (T3)
       - ZERO findings may be in `## Tier 1` → downgrade to T2/T3 based on prerequisite
@@ -409,19 +489,19 @@ Sub-agents are **independent execution contexts** — they have no memory of the
       - Prerequisites MUST use only canonical values: `None`, `Authenticated User`, `Privileged User`, `Internal Network`, `Local Process Access`, `Host/OS Access`, `Admin Credentials`, `Physical Access`, `{Component} Compromise`. ⛔ `Application Access` and `Host Access` are FORBIDDEN.
       If ANY violation exists → **DO NOT WRITE THE FILE.** Fix all violations first.
 
-   ⛔ **Fail-fast gate:** Immediately after writing, run the Inline Quick-Checks for `3-findings.md` from `verification-checklist.md`. Fix before proceeding.
+   ⛔ **Fail-fast gate:** Immediately after writing, run the Inline Quick-Checks for `5-securityfindings.md` from `verification-checklist.md`. Fix before proceeding.
 
    ⛔ **MANDATORY: All 3 tier sections must be present.** Even if a tier has zero findings, include the heading with a note:
    - `## Tier 1 — Direct Exposure (No Prerequisites)` → `*No Tier 1 findings identified for this repository.*`
    - This ensures structural consistency for comparison matching and validation.
 
    ⛔ **COVERAGE VERIFICATION FEEDBACK LOOP (MANDATORY):**
-   After writing the Threat Coverage Verification table at the end of `3-findings.md`:
+   After writing the Threat Coverage Verification table at the end of `5-securityfindings.md`:
    1. **Scan the table you just wrote.** Count how many threats have status `✅ Covered` vs `🔄 Mitigated by Platform` vs `⚠️ Needs Review` vs `⚠️ Accepted Risk`.
    2. **If ANY threat has `⚠️ Accepted Risk`** → FAIL. The tool cannot accept risks. Go back and create a finding for each one.
    3. **If Platform ratio > 20%** → SUSPECT. Re-examine each `🔄 Mitigated by Platform` entry: is the mitigation truly from an EXTERNAL system managed by a DIFFERENT team? If the mitigation is the repo's own code (auth middleware, file permissions, TLS config, localhost binding), reclassify as `Open` and create a finding.
-   4. **If ANY `Open` threat in `2-stride-analysis.md` has NO corresponding finding** → create a finding NOW. Use the threat's description as the finding title, the mitigation column as the remediation guidance, and assign severity based on STRIDE category.
-   5. **Update `3-findings.md`** with the newly created findings. Renumber sequentially. Update the Coverage table to show `✅ Covered` for each.
+   4. **If ANY `Open` threat in `4-stride-analysis.md` has NO corresponding finding** → create a finding NOW. Use the threat's description as the finding title, the mitigation column as the remediation guidance, and assign severity based on STRIDE category.
+   5. **Update `5-securityfindings.md`** with the newly created findings. Renumber sequentially. Update the Coverage table to show `✅ Covered` for each.
    6. **This loop is the ENTIRE POINT of the Coverage table** — it's not documentation, it's a self-check that forces complete coverage. If you write the table and don't act on gaps, you've wasted the effort.
 
 8b. **Generate threat inventory** (`threat-inventory.json`)
@@ -444,28 +524,28 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - Extract metrics (totals, per-tier counts, per-STRIDE-category counts)
    - Include git metadata (commit SHA, branch, date) and analysis metadata (model, timestamps)
    - **Reference:** `output-formats.md` for the `threat-inventory.json` schema
-   - **This file is NOT linked in 0-assessment.md** but is always present in the output folder
+   - **This file is NOT linked in 1-assessment.md** but is always present in the output folder
 
    ⛔ **PRE-WRITE SIZE CHECK (MANDATORY — before calling `create_file` for JSON):**
    Before writing `threat-inventory.json`, count the data you plan to include:
-   - Count total threats from `2-stride-analysis.md` (grep `^\| T\d+\.`)
-   - Count total findings from `3-findings.md` (grep `### FIND-`)
-   - Count total components from `0.1-architecture.md`
+   - Count total threats from `4-stride-analysis.md` (grep `^\| T\d+\.`)
+   - Count total findings from `5-securityfindings.md` (grep `### FIND-`)
+   - Count total components from `2-architecture.md`
    - **If threats > 50 OR findings > 15:** DO NOT use a single `create_file` call.
      Instead, use one of: (a) delegate to sub-agent, (b) Python extraction script, (c) chunked write strategy.
    - **If threats ≤ 50 AND findings ≤ 15:** single `create_file` is acceptable, but keep entries minimal (1-sentence description/mitigation fields).
 
    ⛔ **POST-WRITE VALIDATION (MANDATORY — JSON Array Completeness):**
    After writing `threat-inventory.json`, immediately verify:
-   - `threats.length == metrics.total_threats` — if mismatch, the threats array was truncated during generation. Rebuild by re-reading `2-stride-analysis.md` and extracting every threat row.
-   - `findings.length == metrics.total_findings` — if mismatch, rebuild from `3-findings.md`.
+   - `threats.length == metrics.total_threats` — if mismatch, the threats array was truncated during generation. Rebuild by re-reading `4-stride-analysis.md` and extracting every threat row.
+   - `findings.length == metrics.total_findings` — if mismatch, rebuild from `5-securityfindings.md`.
    - `components.length == metrics.total_components` — if mismatch, rebuild from architecture/element tables.
    
    ⛔ **CROSS-FILE THREAT COUNT VERIFICATION (MANDATORY — catches dropped threats):**
    The JSON `threats.length` can match `metrics.total_threats` but BOTH can be wrong if threats were dropped during JSON generation. To catch this:
-   - Count threat rows in `2-stride-analysis.md`: grep for `^\| T\d+\.` and count unique threat IDs
+   - Count threat rows in `4-stride-analysis.md`: grep for `^\| T\d+\.` and count unique threat IDs
    - Compare this count to `threats.length` in the JSON
-   - If the markdown has MORE threats than the JSON → the JSON dropped threats. Rebuild the JSON by re-extracting ALL threats from `2-stride-analysis.md`.
+   - If the markdown has MORE threats than the JSON → the JSON dropped threats. Rebuild the JSON by re-extracting ALL threats from `4-stride-analysis.md`.
    - This is the #2 quality issue observed in testing (after truncation). Large repos (114+ threats) frequently have 1-3 threats dropped when sub-agents write the JSON from memory instead of re-reading the STRIDE file.
 
    ⛔ **FIELD NAME COMPLIANCE GATE (MANDATORY — run immediately after array check):**
@@ -484,7 +564,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    1. **DELETE** the truncated `threat-inventory.json` immediately
    2. **DO NOT attempt to patch** the truncated file — partial JSON is unreliable
    3. **Regenerate using one of these strategies** (in preference order):
-      a. **Delegate to a sub-agent** — hand the sub-agent the output folder path and instruct it to read `2-stride-analysis.md` and `3-findings.md`, then write `threat-inventory.json`. The sub-agent has a fresh context window.
+      a. **Delegate to a sub-agent** — hand the sub-agent the output folder path and instruct it to read `4-stride-analysis.md` and `5-securityfindings.md`, then write `threat-inventory.json`. The sub-agent has a fresh context window.
       b. **Python extraction script** — write a Python script that reads the markdown files, extracts threats/findings via regex, and writes the JSON. Run the script via terminal.
       c. **Chunked write** — use the Large Repo Strategy below.
    4. **Re-validate** after regeneration — if still mismatched, repeat with the next strategy
@@ -503,13 +583,13 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - Remove redundant fields that duplicate markdown content
    - The JSON is for MATCHING, not for reading — brevity is key
 
-9. **Write assessment** (`0-assessment.md`)
+9. **Write assessment** (`1-assessment.md`)
    - **Reference:** `output-formats.md` for assessment template
    - **Reference:** `skeletons/skeleton-assessment.md` — read this skeleton, copy VERBATIM, fill in `[FILL]` placeholders
    - ⚠️ **ALL 7 sections are MANDATORY:** Report Files, Executive Summary, Action Summary (with Quick Wins), Analysis Context & Assumptions (with Needs Verification + Finding Overrides), References Consulted, Report Metadata, Classification Reference
    - Do NOT add extra sections like "Severity Distribution", "Architecture Risk Areas", "Methodology Notes", or "Deliverables" — these are NOT in the template
 
-   ⛔ **PRE-WRITE GATE — Verify before calling `create_file` for `0-assessment.md`:**
+   ⛔ **PRE-WRITE GATE — Verify before calling `create_file` for `1-assessment.md`:**
    1. Exactly 7 sections: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions (with `&`), References Consulted, Report Metadata, Classification Reference
    2. `---` horizontal rules between EVERY pair of `## ` sections (minimum 6)
    3. `### Quick Wins`, `### Needs Verification`, `### Finding Overrides` all present
@@ -517,7 +597,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    5. ALL metadata values wrapped in backticks; ALL fields present (Model, Analysis Started, Analysis Completed, Duration)
    6. Element/finding/threat counts match actual counts from other files
 
-   ⛔ **Fail-fast gate:** Immediately after writing, run the Inline Quick-Checks for `0-assessment.md` from `verification-checklist.md`. Fix before proceeding.
+   ⛔ **Fail-fast gate:** Immediately after writing, run the Inline Quick-Checks for `1-assessment.md` from `verification-checklist.md`. Fix before proceeding.
 
 10. **Final verification** — iterative correction loop
 
@@ -558,7 +638,7 @@ Delegate NARROW, READ-ONLY tasks to sub-agents (see Sub-Agent Governance above).
 - **Verification:** Hand the verification sub-agent the content of `verification-checklist.md` and the output folder path. It reads the files and returns PASS/FAIL results. The PARENT fixes any failures.
 - **JSON generation (exception):** For large repos, delegate `threat-inventory.json` writing with exact file path and pre-computed data
 
-**NEVER delegate:** "Write 0.1-architecture.md", "Generate the STRIDE analysis", "Perform the threat model analysis", or any prompt that would cause the sub-agent to independently produce report files.
+**NEVER delegate:** "Write 2-architecture.md", "Generate the STRIDE analysis", "Perform the threat model analysis", or any prompt that would cause the sub-agent to independently produce report files.
 
 ---
 
@@ -577,6 +657,13 @@ The full verification checklist is in `verification-checklist.md`. It contains 9
 6. **Phase 6 — Deterministic Identity**: Component ID stability, boundary naming, flow ID consistency
 7. **Phase 7 — Evidence-Based Prerequisites**: Prerequisite deployment evidence, coverage completeness
 8. **Phase 8 — Comparison HTML** (incremental only): HTML structure, change annotations, CSS
+
+**Phase 3 must also verify:**
+- `3-threatmodel.md` contains a `## Security Review Questions` section (Step 7c output) — unless `STEP_7C_RESULT` is "file not found"
+- `threat-inventory.json` contains a `pattern_context` object (Step 1.5 output) — unless `STEP_1_5_RESULT` is "file not found"
+- If `INTERNAL_MODE_RESULT` starts with `"active"`, then `1-assessment.md` MUST contain `## Institutional Context` and `threat-inventory.json` MUST have `pattern_context.mode` = `"internal"`. If either is missing → verification MUST FAIL.
+- If `INTERNAL_MODE_RESULT` starts with `"inactive"`, then `## Institutional Context` MUST NOT appear and `pattern_context.mode` MUST be `"public"`. If present → verification MUST FAIL.
+- If either section is missing and the corresponding reference file exists on disk, the verification MUST FAIL
 
 **Inline Quick-Checks:** `verification-checklist.md` also contains Inline Quick-Checks that MUST be run immediately after writing each file (before Step 10). These catch errors while content is still in active context.
 

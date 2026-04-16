@@ -1,4 +1,4 @@
-# Skeleton: 1.1-threatmodel.mmd
+# Skeleton: 3.1-threatmodel.mmd
 
 > **⛔ This is a raw Mermaid file — NO markdown wrapper. Line 1 MUST start with `%%{init:`.**
 > **The init block, classDefs, and linkStyle are FIXED — never change colors/strokes.**
@@ -62,7 +62,7 @@ flowchart LR
   1. Count element nodes: lines with (("...")), [("...")], ["..."] shapes
   2. Count boundaries: lines with 'subgraph'
   3. If elements > 15 OR boundaries > 4:
-     → OPEN skeleton-summary-dfd.md and create 1.2-threatmodel-summary.mmd NOW
-     → Do NOT proceed to 1-threatmodel.md until summary exists
-  4. If threshold NOT met → skip summary, proceed to 1-threatmodel.md
+     → OPEN skeleton-summary-dfd.md and create 3.2-threatmodel-summary.mmd NOW
+     → Do NOT proceed to 3-threatmodel.md until summary exists
+  4. If threshold NOT met → skip summary, proceed to 3-threatmodel.md
   This is the most frequently skipped step. The gate is MANDATORY. -->

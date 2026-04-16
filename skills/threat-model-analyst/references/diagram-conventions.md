@@ -159,7 +159,7 @@ Sequence diagrams cannot use `classDef`. Use this init block:
 
 ## Diagram Type: Threat Model (DFD)
 
-Used in: `1-threatmodel.md`, `1.1-threatmodel.mmd`, `1.2-threatmodel-summary.mmd`
+Used in: `3-threatmodel.md`, `3.1-threatmodel.mmd`, `3.2-threatmodel-summary.mmd`
 
 ### `.mmd` File Format — CRITICAL
 
@@ -273,7 +273,7 @@ flowchart LR
 
 ## Diagram Type: Architecture
 
-Used in: `0.1-architecture.md` only
+Used in: `2-architecture.md` only
 
 ### ClassDef & Shapes
 
@@ -382,7 +382,7 @@ flowchart LR
 
 ## Sequence Diagram Rules
 
-Used in: `0.1-architecture.md` top scenarios
+Used in: `2-architecture.md` top scenarios
 
 - The **first 3 scenarios MUST** each include a Mermaid `sequenceDiagram`
 - Scenarios 4-5 may optionally include one
@@ -420,7 +420,7 @@ sequenceDiagram
 
 ## Summary Diagram Rules
 
-Used in: `1.2-threatmodel-summary.mmd` (generated only when detailed diagram has >15 elements or >4 trust boundaries)
+Used in: `3.2-threatmodel-summary.mmd` (generated only when detailed diagram has >15 elements or >4 trust boundaries)
 
 1. **All trust boundaries must be preserved** — never combine or omit
 2. **Only combine components that are NOT**: entry points, core flow components, security-critical services, primary data stores
@@ -431,7 +431,7 @@ Used in: `1.2-threatmodel-summary.mmd` (generated only when detailed diagram has
    SupportServices(("Supporting<br/>(Logging, Monitoring)"))
    ```
 5. Use `SDF` prefix for summary data flows: `SDF01`, `SDF02`, ...
-6. Include mapping table in `1-threatmodel.md`:
+6. Include mapping table in `3-threatmodel.md`:
    ```
    | Summary Element | Contains | Summary Flows | Maps to Detailed Flows |
    ```
@@ -485,7 +485,7 @@ style BoundaryId fill:none,stroke:#e31a1c,stroke-width:3px,stroke-dasharray: 5 5
 
 Although sidecars are NOT separate diagram nodes, they DO appear in STRIDE analysis:
 
-- Sidecars with distinct threat surfaces (e.g., MISE auth bypass, Dapr mTLS) get their own `## Component` section in `2-stride-analysis.md`
+- Sidecars with distinct threat surfaces (e.g., MISE auth bypass, Dapr mTLS) get their own `## Component` section in `4-stride-analysis.md`
 - The component heading notes which pods they are co-located in
 - Threats related to intra-pod communication (localhost bypass, shared namespace) go under the **primary container's** component section
 - **Pod Co-location** line in STRIDE template: list co-located sidecars (e.g., "MISE Sidecar, Dapr Sidecar")

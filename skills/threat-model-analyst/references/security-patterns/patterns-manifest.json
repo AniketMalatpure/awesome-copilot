@@ -1,0 +1,508 @@
+{
+  "schema_version": "1.0",
+  "description": "Security pattern archetypes derived from anonymized threat model reviews. Maps component types to common threats, decision patterns, acceptable risks, and review questions.",
+  "generated_at": "2026-04-09T23:55:25.048194+00:00",
+  "archetype_count": 12,
+  "archetypes": [
+    {
+      "id": "api-control-plane",
+      "name": "API Control Plane Service",
+      "description": "Multi-tenant API services that manage resources, route requests, and enforce authorization. Sits between user-initiated operations and backend services.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "multi-region",
+          "multi-tenant"
+        ],
+        "patterns": [
+          "REST-API",
+          "request-routing",
+          "tenant-isolation",
+          "quota-enforcement",
+          "resource-management"
+        ],
+        "auth_models": [
+          "OAuth2",
+          "bearer-token",
+          "SAS-token",
+          "managed-identity",
+          "APIM"
+        ],
+        "technologies": [
+          "ASP.NET",
+          "Azure-Front-Door",
+          "APIM",
+          "Azure-Functions",
+          "Express",
+          "FastAPI"
+        ],
+        "config_signals": [
+          "per-tenant-config",
+          "rate-limit-settings",
+          "authorization-policy"
+        ]
+      },
+      "archetype_file": "archetypes/api-control-plane.md",
+      "source_count": 9
+    },
+    {
+      "id": "telemetry-pipeline",
+      "name": "Telemetry / Monitoring Pipeline",
+      "description": "Systems that ingest, process, and route telemetry data (metrics, logs, traces) from hosts, containers, and applications at scale.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "on-prem",
+          "hybrid",
+          "agent-based"
+        ],
+        "patterns": [
+          "data-ingestion",
+          "pipeline",
+          "collector-exporter",
+          "config-driven",
+          "high-throughput"
+        ],
+        "auth_models": [
+          "APPKI",
+          "managed-identity",
+          "certificate-auth",
+          "host-auth"
+        ],
+        "technologies": [
+          "Geneva",
+          "OpenTelemetry",
+          "Fluentd",
+          "Prometheus",
+          "ClickHouse",
+          "Kusto",
+          "Event-Hub",
+          "MA-agent"
+        ],
+        "config_signals": [
+          "telemetry-config",
+          "collection-rules",
+          "data-collection-endpoints",
+          "feature-flags"
+        ]
+      },
+      "archetype_file": "archetypes/telemetry-pipeline.md",
+      "source_count": 12
+    },
+    {
+      "id": "crypto-key-mgmt",
+      "name": "Cryptographic / Key Management Service",
+      "description": "Services that generate, store, rotate, and manage cryptographic keys, certificates, and signing operations.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "on-prem",
+          "HSM-backed"
+        ],
+        "patterns": [
+          "key-generation",
+          "certificate-issuance",
+          "signing-operations",
+          "key-rotation",
+          "attestation"
+        ],
+        "auth_models": [
+          "managed-identity",
+          "federated-credentials",
+          "certificate-auth",
+          "RBAC"
+        ],
+        "technologies": [
+          "Azure-Key-Vault",
+          "DPAPI",
+          "CNG",
+          "HSM",
+          "X509",
+          "ACME",
+          "cert-manager"
+        ],
+        "config_signals": [
+          "key-vault-uri",
+          "certificate-thumbprint",
+          "signing-key-config",
+          "rotation-policy"
+        ]
+      },
+      "archetype_file": "archetypes/crypto-key-mgmt.md",
+      "source_count": 14
+    },
+    {
+      "id": "edge-appliance",
+      "name": "Edge / On-Prem Appliance",
+      "description": "Software running on customer-controlled hardware or edge infrastructure, often with limited cloud connectivity and local admin requirements.",
+      "tech_indicators": {
+        "deployment": [
+          "on-prem",
+          "air-gapped",
+          "customer-hardware",
+          "edge",
+          "disconnected"
+        ],
+        "patterns": [
+          "offline-validation",
+          "local-admin",
+          "zip-ingestion",
+          "firmware-update",
+          "diagnostic-collection"
+        ],
+        "auth_models": [
+          "local-certificate",
+          "device-identity",
+          "no-cloud-identity",
+          "pre-shared-key"
+        ],
+        "technologies": [
+          "Windows-Server",
+          "Linux-embedded",
+          "IoT-Edge",
+          "Azure-Stack",
+          "HCI",
+          "Arc"
+        ],
+        "config_signals": [
+          "no-cloud-dependency",
+          "local-cert-store",
+          "offline-mode",
+          "device-provisioning"
+        ]
+      },
+      "archetype_file": "archetypes/edge-appliance.md",
+      "source_count": 28
+    },
+    {
+      "id": "k8s-extension",
+      "name": "Kubernetes / Container Orchestration Extension",
+      "description": "Operators, controllers, or extensions deployed into customer-managed Kubernetes clusters, often via Arc or Helm.",
+      "tech_indicators": {
+        "deployment": [
+          "kubernetes",
+          "arc-extension",
+          "helm-chart",
+          "operator-pattern"
+        ],
+        "patterns": [
+          "namespace-scoping",
+          "RBAC-operator",
+          "custom-resource-definition",
+          "sidecar-injection",
+          "network-policy"
+        ],
+        "auth_models": [
+          "kubernetes-RBAC",
+          "service-account",
+          "managed-identity",
+          "pod-identity"
+        ],
+        "technologies": [
+          "Kubernetes",
+          "Helm",
+          "Arc",
+          "Calico",
+          "Dapr",
+          "Istio",
+          "containerd"
+        ],
+        "config_signals": [
+          "kubeconfig",
+          "namespace-config",
+          "helm-values",
+          "network-policy-yaml"
+        ]
+      },
+      "archetype_file": "archetypes/k8s-extension.md",
+      "source_count": 4
+    },
+    {
+      "id": "ai-llm-service",
+      "name": "AI / LLM Inference & Reasoning Service",
+      "description": "Services that accept natural language or structured input, process through AI/ML models, and produce outputs that may drive downstream actions.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "on-prem",
+          "hybrid",
+          "GPU-accelerated"
+        ],
+        "patterns": [
+          "prompt-processing",
+          "RAG",
+          "agent-orchestration",
+          "tool-calling",
+          "model-serving",
+          "guardrails"
+        ],
+        "auth_models": [
+          "API-key",
+          "managed-identity",
+          "OAuth2",
+          "user-delegation"
+        ],
+        "technologies": [
+          "Azure-OpenAI",
+          "ONNX",
+          "Phi",
+          "Mistral",
+          "LangChain",
+          "Semantic-Kernel",
+          "vLLM",
+          "Ollama"
+        ],
+        "config_signals": [
+          "model-endpoint",
+          "deployment-name",
+          "prompt-template",
+          "guardrail-config",
+          "RAG-index"
+        ]
+      },
+      "archetype_file": "archetypes/ai-llm-service.md",
+      "source_count": 7
+    },
+    {
+      "id": "build-supply-chain",
+      "name": "Build / Release / Supply-Chain Infrastructure",
+      "description": "Systems that build, sign, attest, and distribute software artifacts. Protect the integrity of the software supply chain.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "pipeline-agent",
+          "build-farm"
+        ],
+        "patterns": [
+          "code-signing",
+          "artifact-attestation",
+          "hash-verification",
+          "pipeline-isolation",
+          "SBOM"
+        ],
+        "auth_models": [
+          "pipeline-identity",
+          "managed-identity",
+          "certificate-signing",
+          "workload-identity"
+        ],
+        "technologies": [
+          "Azure-DevOps",
+          "GitHub-Actions",
+          "NuGet",
+          "Docker-registry",
+          "ACR",
+          "Notary",
+          "SLSA"
+        ],
+        "config_signals": [
+          "signing-certificate",
+          "build-policy",
+          "artifact-feed",
+          "pipeline-yaml"
+        ]
+      },
+      "archetype_file": "archetypes/build-supply-chain.md",
+      "source_count": 20
+    },
+    {
+      "id": "identity-lifecycle",
+      "name": "Identity Lifecycle & Access Management Service",
+      "description": "Services that manage user accounts, access grants, credential resets, and privileged operations. High blast radius if compromised.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "SaaS",
+          "bot-interface"
+        ],
+        "patterns": [
+          "account-management",
+          "credential-reset",
+          "JIT-access",
+          "MFA-enforcement",
+          "role-assignment"
+        ],
+        "auth_models": [
+          "Entra-ID",
+          "OIDC",
+          "SAML",
+          "on-behalf-of",
+          "delegated-permissions"
+        ],
+        "technologies": [
+          "Entra-ID",
+          "Microsoft-Graph",
+          "Teams-Bot",
+          "PIM",
+          "Conditional-Access"
+        ],
+        "config_signals": [
+          "app-registration",
+          "graph-permissions",
+          "bot-config",
+          "JIT-policy"
+        ]
+      },
+      "archetype_file": "archetypes/identity-lifecycle.md",
+      "source_count": 5
+    },
+    {
+      "id": "infra-mgmt",
+      "name": "Cloud / Network Infrastructure Management Service",
+      "description": "Services that provision, configure, and manage cloud or on-prem infrastructure resources (VMs, networking, storage).",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "hybrid",
+          "resource-provider"
+        ],
+        "patterns": [
+          "resource-provisioning",
+          "CRUD-operations",
+          "multi-tenancy",
+          "subscription-scoping",
+          "ARM-integration"
+        ],
+        "auth_models": [
+          "managed-identity",
+          "certificate-auth",
+          "RBAC",
+          "subscription-scoping"
+        ],
+        "technologies": [
+          "ARM",
+          "Bicep",
+          "Terraform",
+          "Azure-Resource-Provider",
+          "Fabric-Controller"
+        ],
+        "config_signals": [
+          "resource-provider-registration",
+          "ARM-template",
+          "subscription-config"
+        ]
+      },
+      "archetype_file": "archetypes/infra-mgmt.md",
+      "source_count": 10
+    },
+    {
+      "id": "data-pipeline-etl",
+      "name": "Data Pipeline / ETL Service",
+      "description": "Systems that ingest data from multiple sources, transform/aggregate, and make it available for consumption. Risk of security context downgrade.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "hybrid",
+          "batch-processing"
+        ],
+        "patterns": [
+          "data-ingestion",
+          "ETL",
+          "aggregation",
+          "snapshot-creation",
+          "cross-source-join"
+        ],
+        "auth_models": [
+          "managed-identity",
+          "connection-string",
+          "service-principal"
+        ],
+        "technologies": [
+          "Kusto",
+          "Cosmos-DB",
+          "Event-Hub",
+          "Data-Factory",
+          "Spark",
+          "Synapse"
+        ],
+        "config_signals": [
+          "connection-string",
+          "data-source-config",
+          "retention-policy",
+          "pipeline-schedule"
+        ]
+      },
+      "archetype_file": "archetypes/data-pipeline-etl.md",
+      "source_count": 13
+    },
+    {
+      "id": "observability-query",
+      "name": "Observability & Analytics Query Service",
+      "description": "Services that provide read access to aggregated system data (logs, metrics, traces, stacks) for diagnostics and analysis.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "SaaS",
+          "portal-extension"
+        ],
+        "patterns": [
+          "query-interface",
+          "read-only-access",
+          "data-aggregation",
+          "user-facing-analytics",
+          "dashboarding"
+        ],
+        "auth_models": [
+          "AAD",
+          "on-behalf-of",
+          "APIM",
+          "scoped-tokens"
+        ],
+        "technologies": [
+          "Kusto",
+          "Log-Analytics",
+          "Application-Insights",
+          "Grafana",
+          "Geneva"
+        ],
+        "config_signals": [
+          "workspace-id",
+          "query-endpoint",
+          "data-retention",
+          "RBAC-scope"
+        ]
+      },
+      "archetype_file": "archetypes/observability-query.md",
+      "source_count": 15
+    },
+    {
+      "id": "compliance-automation",
+      "name": "Compliance & Policy Automation Service",
+      "description": "Systems that automate compliance checks, audit validation, regulatory evidence collection, and policy enforcement.",
+      "tech_indicators": {
+        "deployment": [
+          "cloud",
+          "SaaS",
+          "agent-based"
+        ],
+        "patterns": [
+          "policy-evaluation",
+          "audit-evidence",
+          "compliance-scanning",
+          "regulatory-mapping",
+          "attestation"
+        ],
+        "auth_models": [
+          "managed-identity",
+          "service-principal",
+          "delegated-reader"
+        ],
+        "technologies": [
+          "Azure-Policy",
+          "Defender",
+          "Sentinel",
+          "Compliance-Manager",
+          "Governance"
+        ],
+        "config_signals": [
+          "policy-definition",
+          "compliance-standard",
+          "audit-config",
+          "evidence-collection"
+        ]
+      },
+      "archetype_file": "archetypes/compliance-automation.md",
+      "source_count": 12
+    }
+  ]
+}

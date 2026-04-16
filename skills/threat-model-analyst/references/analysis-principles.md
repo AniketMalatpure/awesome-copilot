@@ -73,7 +73,7 @@ Apply these frameworks during analysis:
 ⚠️ **Sidecars (Dapr, MISE, Envoy, etc.) are NOT separate components in the DFD** — they are co-located in the same pod as the primary container (see diagram-conventions.md Rule 2). However, sidecar communication MUST still be analyzed for security vulnerabilities.
 
 **How to analyze sidecar threats:**
-- Sidecars with distinct threat surfaces (e.g., MISE auth bypass, Dapr mTLS) get their own `## Component` section in `2-stride-analysis.md` — but are NOT separate DFD nodes (see diagram-conventions.md Rule 2)
+- Sidecars with distinct threat surfaces (e.g., MISE auth bypass, Dapr mTLS) get their own `## Component` section in `4-stride-analysis.md` — but are NOT separate DFD nodes (see diagram-conventions.md Rule 2)
 - Use the format: threat title includes the sidecar name, e.g., "Dapr Sidecar Plaintext Communication"
 - Common sidecar threats:
   - **Information Disclosure (I):** Dapr/MISE sidecar communicating with main container over plaintext HTTP within the pod
@@ -84,13 +84,13 @@ Apply these frameworks during analysis:
 - These threats appear in the sidecar's own STRIDE section (if it has a distinct threat surface) or under the primary component's table (if the sidecar is a simple infrastructure proxy)
 - If the sidecar vulnerability warrants a finding, list it under the sidecar component with a note: "Affects [Dapr/MISE] sidecar communication"
 
-1. **Minimum coverage:** Every component in `0.1-architecture.md` MUST have a corresponding section in `2-stride-analysis.md` with actual threat enumeration (not just "no threats found").
+1. **Minimum coverage:** Every component in `2-architecture.md` MUST have a corresponding section in `4-stride-analysis.md` with actual threat enumeration (not just "no threats found").
 2. **Finding density check:** As a guideline, expect roughly 1 finding per 2-3 significant components. If a repo has 15+ components and you have fewer than 8 findings, re-examine under-analyzed components.
 3. **Use sub-agents for scale:** For repos with 10+ components, delegate component-specific STRIDE analysis to sub-agents to maintain depth. Each sub-agent should analyze 3-5 components.
 4. **OWASP checklist sweep:** After component-level STRIDE, do a cross-cutting pass using the OWASP Top 10:2025 checklist below. This catches systemic issues (missing auth, no audit logging, no rate limiting, unsigned images) that component-level analysis may miss.
 5. **Infrastructure-layer check:** Explicitly check for: container security contexts, network policies, resource limits, image signing, secrets management, backup/DR controls, and monitoring/alerting gaps.
 6. **Exhaustive findings consolidation:** After STRIDE analysis is complete, scan the STRIDE output for ALL identified threats. Every threat MUST map to either:
-   - A finding in `3-findings.md` (consolidated with related threats)
+   - A finding in `5-securityfindings.md` (consolidated with related threats)
    - A `🔄 Mitigated by Platform` entry in the Threat Coverage Verification table (for platform-handled threats only)
    
    **⛔ EVERY `Open` THREAT MUST HAVE A FINDING.** The tool does NOT have authority to accept risks, defer threats, or decide that a threat is "acceptable." That is the engineering team's decision. The tool's job is to identify ALL threats and create findings for them. The Coverage table should show `✅ Covered (FIND-XX)` for every Open threat — NEVER `⚠️ Accepted Risk`.
@@ -132,7 +132,7 @@ Apply these frameworks during analysis:
    - Review each Platform-classified threat
    - If the operator CAN take action (e.g., add input validation, add RBAC checks at startup) → reclassify as `Open` with a finding
    - If the operator genuinely cannot act (e.g., etcd encryption is a cluster admin concern) → Platform is correct
-   - Document the detected pattern and ratio in `0-assessment.md` → Analysis Context & Assumptions
+   - Document the detected pattern and ratio in `1-assessment.md` → Analysis Context & Assumptions
 
 ---
 
@@ -160,7 +160,7 @@ Apply these frameworks during analysis:
 | **NFS/File Shares** | Path traversal, no access control, world-readable mounts | Access control |
 | **Audit/Logging** | No security event logging, log injection, no tamper protection | Monitoring gaps |
 
-**Process:** After writing 3-findings.md, scan this table for technologies present in the repo. For each technology, evaluate its common technology-specific threat patterns based on how that technology is actually used, and ensure any relevant risks are accounted for in the assessment. Add a finding only if an actual threat or meaningful mitigation gap is identified.
+**Process:** After writing 5-securityfindings.md, scan this table for technologies present in the repo. For each technology, evaluate its common technology-specific threat patterns based on how that technology is actually used, and ensure any relevant risks are accounted for in the assessment. Add a finding only if an actual threat or meaningful mitigation gap is identified.
 
 ---
 
@@ -321,7 +321,7 @@ Prerequisites MUST use only these values (closed enum). The tier follows mechani
 
 **CRITICAL: This section OVERRIDES the default tier rules above when specific deployment conditions apply.**
 
-Before assigning tiers, determine the system's deployment model from code, docs, and architecture. Record the **Deployment Classification** and **Component Exposure Table** in `0.1-architecture.md` (see `skeleton-architecture.md`).
+Before assigning tiers, determine the system's deployment model from code, docs, and architecture. Record the **Deployment Classification** and **Component Exposure Table** in `2-architecture.md` (see `skeleton-architecture.md`).
 
 **Deployment Classifications and their tier implications:**
 
@@ -333,7 +333,7 @@ Before assigning tiers, determine the system's deployment model from code, docs,
 | `K8S_SERVICE` | Kubernetes Deployment with ClusterIP/LoadBalancer | ✅ YES | Depends on Service type |
 | `NETWORK_SERVICE` | Public API, cloud endpoint, internet-facing | ✅ YES | `None` (if no auth) |
 
-**The Component Exposure Table in `0.1-architecture.md` sets the prerequisite floor per component.** No threat or finding may have a lower prerequisite than the table permits. This table is filled in Step 1 and is binding on all subsequent analysis steps.
+**The Component Exposure Table in `2-architecture.md` sets the prerequisite floor per component.** No threat or finding may have a lower prerequisite than the table permits. This table is filled in Step 1 and is binding on all subsequent analysis steps.
 
 **Legacy override table (still applies as fallback):**
 
@@ -346,7 +346,7 @@ Before assigning tiers, determine the system's deployment model from code, docs,
 | Named pipe / Unix socket | Cannot be T1 — requires local process access |
 
 **How to apply:**
-1. In Step 1 (context gathering), identify deployment model and record in 0.1-architecture.md
+1. In Step 1 (context gathering), identify deployment model and record in 2-architecture.md
 2. In Step 6/7 (finding verification), check each T1 candidate against the table above
 3. If ANY override applies, downgrade to T2 (or T3 if multiple)
 4. Document the override rationale in the finding’s Description
@@ -376,8 +376,8 @@ Before documenting each finding, verify:
 - [ ] **Platform documentation consulted**: When uncertain, verify against official docs
 
 **Classification outcomes:**
-- **Confirmed**: Positive evidence of vulnerability → Document as finding in `3-findings.md`
-- **Needs Verification**: Unable to confirm but potential risk → Add to "Needs Verification" in `0-assessment.md`
+- **Confirmed**: Positive evidence of vulnerability → Document as finding in `5-securityfindings.md`
+- **Needs Verification**: Unable to confirm but potential risk → Add to "Needs Verification" in `1-assessment.md`
 - **Not a Finding**: Confirmed secure by default or explicitly enabled → Do not document
 
 ---

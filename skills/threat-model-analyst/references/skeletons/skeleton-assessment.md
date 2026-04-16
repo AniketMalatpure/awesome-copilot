@@ -1,4 +1,4 @@
-# Skeleton: 0-assessment.md
+# Skeleton: 1-assessment.md
 
 > **⛔ Copy the template content below VERBATIM (excluding the outer code fence). Replace `[FILL]` placeholders. Do NOT add/rename/reorder sections.**
 > `[FILL]` = single value | `[FILL-PROSE]` = paragraphs | `[REPEAT]...[END-REPEAT]` = N copies | `[CONDITIONAL]...[END-CONDITIONAL]` = include if condition met
@@ -8,29 +8,36 @@
 ```markdown
 # Security Assessment
 
+[TOC: Generate a flat bullet list of all `## ` headings in this file as Markdown anchor links. Example:
+- [Report Files](#report-files)
+- [Executive Summary](#executive-summary)
+- [Action Summary](#action-summary)
+- ...one entry per `## ` heading in the final file.
+Include conditional sections (Pattern Context, Institutional Context) only if they are present in the output.]
+
 ---
 
 ## Report Files
 
 | File | Description |
 |------|-------------|
-| [0-assessment.md](0-assessment.md) | This document — executive summary, risk rating, action plan, metadata |
-| [0.1-architecture.md](0.1-architecture.md) | Architecture overview, components, scenarios, tech stack |
-| [1-threatmodel.md](1-threatmodel.md) | Threat model DFD diagram with element, flow, and boundary tables |
-| [1.1-threatmodel.mmd](1.1-threatmodel.mmd) | Pure Mermaid DFD source file |
-| [2-stride-analysis.md](2-stride-analysis.md) | Full STRIDE-A analysis for all components |
-| [3-findings.md](3-findings.md) | Prioritized security findings with remediation |
-[CONDITIONAL: Include if 1.2-threatmodel-summary.mmd was generated]
-| [1.2-threatmodel-summary.mmd](1.2-threatmodel-summary.mmd) | Summary DFD for large systems |
+| [1-assessment.md](1-assessment.md) | This document — executive summary, risk rating, action plan, metadata |
+| [2-architecture.md](2-architecture.md) | Architecture overview, components, scenarios, tech stack |
+| [3-threatmodel.md](3-threatmodel.md) | Threat model DFD diagram with element, flow, and boundary tables |
+| [3.1-threatmodel.mmd](3.1-threatmodel.mmd) | Pure Mermaid DFD source file |
+| [4-stride-analysis.md](4-stride-analysis.md) | Full STRIDE-A analysis for all components |
+| [5-securityfindings.md](5-securityfindings.md) | Prioritized security findings with remediation |
+[CONDITIONAL: Include if 3.2-threatmodel-summary.mmd was generated]
+| [3.2-threatmodel-summary.mmd](3.2-threatmodel-summary.mmd) | Summary DFD for large systems |
 [END-CONDITIONAL]
 [CONDITIONAL: Include for incremental analysis]
 | [incremental-comparison.html](incremental-comparison.html) | Visual comparison report |
 [END-CONDITIONAL]
 
 <!-- ⛔ POST-TABLE CHECK: Verify Report Files:
-  1. `0-assessment.md` is the FIRST row (not 0.1-architecture.md)
+  1. `1-assessment.md` is the FIRST row (not 2-architecture.md)
   2. All generated files are listed
-  3. Conditional rows (1.2-threatmodel-summary.mmd, incremental-comparison.html) only if those files exist
+  3. Conditional rows (3.2-threatmodel-summary.mmd, incremental-comparison.html) only if those files exist
   If ANY check fails → FIX NOW. -->
 
 ---
@@ -50,7 +57,7 @@
 <!-- ⛔ POST-SECTION CHECK: Verify Executive Summary:
   1. Risk Rating heading has NO emojis: `### Risk Rating: Elevated` not `### Risk Rating: 🟠 Elevated`
   2. Note on threat counts blockquote is present
-  3. Element count and boundary count match actual counts from 1-threatmodel.md
+  3. Element count and boundary count match actual counts from 3-threatmodel.md
   If ANY check fails → FIX NOW. -->
 
 ---
@@ -59,17 +66,17 @@
 
 | Tier | Description | Threats | Findings | Priority |
 |------|-------------|---------|----------|----------|
-| [Tier 1](3-findings.md#tier-1--direct-exposure-no-prerequisites) | Directly exploitable | [FILL] | [FILL] | 🔴 Critical Risk |
-| [Tier 2](3-findings.md#tier-2--conditional-risk-authenticated--single-prerequisite) | Requires authenticated access | [FILL] | [FILL] | 🟠 Elevated Risk |
-| [Tier 3](3-findings.md#tier-3--defense-in-depth-prior-compromise--host-access) | Requires prior compromise | [FILL] | [FILL] | 🟡 Moderate Risk |
+| [Tier 1](5-securityfindings.md#tier-1--direct-exposure-no-prerequisites) | Directly exploitable | [FILL] | [FILL] | 🔴 Critical Risk |
+| [Tier 2](5-securityfindings.md#tier-2--conditional-risk-authenticated--single-prerequisite) | Requires authenticated access | [FILL] | [FILL] | 🟠 Elevated Risk |
+| [Tier 3](5-securityfindings.md#tier-3--defense-in-depth-prior-compromise--host-access) | Requires prior compromise | [FILL] | [FILL] | 🟡 Moderate Risk |
 | **Total** | | **[FILL]** | **[FILL]** | |
 
 <!-- ⛔ POST-TABLE CHECK: Verify Action Summary:
   1. EXACTLY 4 data rows: Tier 1, Tier 2, Tier 3, Total — NO 'Mitigated', 'Platform', or 'Fixed' rows
   2. Priority column is FIXED: Tier 1=🔴 Critical Risk, Tier 2=🟠 Elevated Risk, Tier 3=🟡 Moderate Risk — never changed based on counts
-  3. Threats column sums match 2-stride-analysis.md Totals row
-  4. Findings column sums match 3-findings.md FIND- heading count
-  5. Tier 1/2/3 cells are hyperlinks to 3-findings.md tier headings — verify anchors resolve
+  3. Threats column sums match 4-stride-analysis.md Totals row
+  4. Findings column sums match 5-securityfindings.md FIND- heading count
+  5. Tier 1/2/3 cells are hyperlinks to 5-securityfindings.md tier headings — verify anchors resolve
   If ANY check fails → FIX NOW before continuing. -->
 
 ### Priority by Tier and CVSS Score (Top 10)
@@ -77,27 +84,27 @@
 | Finding | Tier | CVSS Score | SDL Severity | Title |
 |---------|------|------------|-------------|-------|
 [REPEAT: top 10 findings only, sorted by Tier (T1 first, then T2, then T3), then by CVSS score descending within each tier]
-| [FIND-XX](3-findings.md#find-xx-title-slug) | T[FILL] | [FILL] | [FILL] | [FILL] |
+| [FIND-XX](5-securityfindings.md#find-xx-title-slug) | T[FILL] | [FILL] | [FILL] | [FILL] |
 [END-REPEAT]
 
 <!-- ⛔ POST-TABLE CHECK: Verify Priority by Tier and CVSS Score:
   1. Maximum 10 rows (top 10 findings only, not all findings)
   2. Sort order: ALL Tier 1 findings first (by CVSS desc), then Tier 2 (by CVSS desc), then Tier 3 (by CVSS desc)
-  3. Every Finding cell is a hyperlink: [FIND-XX](3-findings.md#find-xx-title-slug)
-  4. Verify each hyperlink anchor resolves: compute the anchor from the ACTUAL heading text in 3-findings.md (lowercase, spaces→hyphens, strip special chars). The link must match whatever the heading is.
-  5. CVSS scores match the actual finding's CVSS value in 3-findings.md
+  3. Every Finding cell is a hyperlink: [FIND-XX](5-securityfindings.md#find-xx-title-slug)
+  4. Verify each hyperlink anchor resolves: compute the anchor from the ACTUAL heading text in 5-securityfindings.md (lowercase, spaces→hyphens, strip special chars). The link must match whatever the heading is.
+  5. CVSS scores match the actual finding's CVSS value in 5-securityfindings.md
   If ANY check fails → FIX NOW. -->
 
 ### Quick Wins
 
-<!-- Quick Wins Finding column: each Finding cell MUST be a hyperlink to 3-findings.md, same format as Priority table:
-  [FIND-XX](3-findings.md#find-xx-title-slug)
-  Compute the anchor from the ACTUAL heading text in 3-findings.md. -->
+<!-- Quick Wins Finding column: each Finding cell MUST be a hyperlink to 5-securityfindings.md, same format as Priority table:
+  [FIND-XX](5-securityfindings.md#find-xx-title-slug)
+  Compute the anchor from the ACTUAL heading text in 5-securityfindings.md. -->
 
 | Finding | Title | Why Quick |
 |---------|-------|-----------|
 [REPEAT]
-| [FIND-XX](3-findings.md#find-xx-title-slug) | [FILL] | [FILL] |
+| [FIND-XX](5-securityfindings.md#find-xx-title-slug) | [FILL] | [FILL] |
 [END-REPEAT]
 
 ---
@@ -183,6 +190,50 @@
 
 [FILL-PROSE: or "No additional notes."]
 
+<!-- BEGIN OPTIONAL PATTERN SECTIONS — include only if Step 1.5 pattern matching was performed -->
+
+---
+
+## Pattern Context
+
+| Component | Matched Archetype | Confidence | Review Questions Surfaced | Threats Hinted |
+|-----------|-------------------|------------|--------------------------|----------------|
+[REPEAT: one row per component with a matched archetype]
+| [FILL: ComponentName] | [FILL: archetype-id] | [FILL: 0.XX] | [FILL: count] | [FILL: T-ARCH-NNN, ...] |
+[END-REPEAT]
+
+> Archetype patterns are advisory — all findings are verified against actual code.
+> Pattern data derived from anonymized reviews of similar component types.
+
+<!-- If no archetypes matched ≥0.4, omit this entire section (including the heading). -->
+
+<!-- BEGIN INTERNAL-ONLY SECTION — include ONLY if internal-knowledge/ was active AND mode is "internal" -->
+
+---
+
+## Institutional Context
+
+### Similar System References
+| Component | Similar System | Archetype | Key Insight | Review Date |
+|-----------|---------------|-----------|-------------|-------------|
+[REPEAT: one row per similar system match above threshold]
+| [FILL] | [FILL] | [FILL] | [FILL] | [FILL] |
+[END-REPEAT]
+
+### Prior Decisions Applicable
+| Decision | Source System | Relevance to Current Analysis |
+|----------|-------------|-------------------------------|
+[REPEAT: one row per applicable prior decision]
+| [FILL] | [FILL] | [FILL] |
+[END-REPEAT]
+
+> ⚠️ INTERNAL ONLY — this section references internal system names and must not be published externally.
+
+<!-- If internal-knowledge/ was not active or mode is "public", omit this entire section.
+     ⛔ NEVER include Institutional Context in public-mode reports — this is a data leak. -->
+
+<!-- END OPTIONAL PATTERN SECTIONS -->
+
 ---
 
 ## References Consulted
@@ -260,7 +311,7 @@
 ```
 
 **Critical format rules baked into this skeleton:**
-- `0-assessment.md` is the FIRST row in Report Files (not `0.1-architecture.md`)
+- `1-assessment.md` is the FIRST row in Report Files (not `2-architecture.md`)
 - `## Analysis Context & Assumptions` uses `&` (never word "and")
 - `---` horizontal rules between EVERY pair of `## ` sections (minimum 6)
 - `### Quick Wins` always present (with fallback note if no low-effort findings)

@@ -1,0 +1,9 @@
+# Internal knowledge (contains real system names — never publish)
+internal-knowledge/
+
+# Pattern compilation logs
+.pattern-logs/
+
+# Python artifacts
+__pycache__/
+*.pyc

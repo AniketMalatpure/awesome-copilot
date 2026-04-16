@@ -1,4 +1,4 @@
-# Skeleton: 3-findings.md
+# Skeleton: 5-securityfindings.md
 
 > **⛔ Copy the template content below VERBATIM (excluding the outer code fence). Replace `[FILL]` placeholders. ALL 10 attribute rows are MANDATORY per finding. Organize by TIER, not by severity.**
 > **⛔ DO NOT abbreviate attribute names. Use EXACT names: `SDL Bugbar Severity` (not `Severity`), `Exploitation Prerequisites` (not `Prerequisites`), `Exploitability Tier` (not `Tier`), `Remediation Effort` (not `Effort`), `CVSS 4.0` (not `CVSS Score`).**
@@ -9,6 +9,14 @@
 
 ```markdown
 # Security Findings
+
+[TOC: Generate a flat bullet list of all `## ` and `### FIND-` headings in this file as Markdown anchor links. Example:
+- [Tier 1 — Direct Exposure (No Prerequisites)](#tier-1--direct-exposure-no-prerequisites)
+  - [FIND-01: Title](#find-01-title)
+- [Tier 2 — Conditional Risk (Authenticated / Single Prerequisite)](#tier-2--conditional-risk-authenticated--single-prerequisite)
+  - [FIND-02: Title](#find-02-title)
+- ...one entry per tier `## ` heading, with nested `### FIND-` entries.
+For findings, use nested list items under their tier.]
 
 ---
 
@@ -29,12 +37,12 @@
 | Remediation Effort | [FILL: Low / Medium / High] |
 | Mitigation Type | [FILL: Redesign / Standard Mitigation / Custom Mitigation / Existing Control / Accept Risk / Transfer Risk] |
 | Component | [FILL: component name] |
-| Related Threats | [T[FILL: NN].[FILL: X]](2-stride-analysis.md#[FILL: component-anchor]), [T[FILL: NN].[FILL: X]](2-stride-analysis.md#[FILL: component-anchor]) |
+| Related Threats | [T[FILL: NN].[FILL: X]](4-stride-analysis.md#[FILL: component-anchor]), [T[FILL: NN].[FILL: X]](4-stride-analysis.md#[FILL: component-anchor]) |
 
 <!-- ⛔ POST-FINDING CHECK: Verify this finding IMMEDIATELY:
   1. ALL 10 attribute rows present (SDL Bugbar Severity through Related Threats)
   2. Row names are EXACT: 'SDL Bugbar Severity' (not 'SDL Bugbar'), 'Exploitation Prerequisites' (not 'Prerequisites'), 'Exploitability Tier' (not 'Risk Tier'), 'Remediation Effort' (not 'Effort')
-  3. Related Threats are HYPERLINKS with `](2-stride-analysis.md#` — NOT plain text like 'T01.S, T02.T'
+  3. Related Threats are HYPERLINKS with `](4-stride-analysis.md#` — NOT plain text like 'T01.S, T02.T'
   4. CVSS starts with `CVSS:4.0/` — NOT bare vector
   5. CWE is a hyperlink to cwe.mitre.org — NOT plain text
   6. OWASP uses `:2025` suffix — NOT `:2021`
@@ -46,7 +54,7 @@
 
 #### Evidence
 
-**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — e.g., "binds to 127.0.0.1 only (src/Server.cs:42)", "no auth middleware on /api routes (Startup.cs:18)", "console app with no network listener (Program.cs)". This MUST match the Component Exposure Table in 0.1-architecture.md.]
+**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — e.g., "binds to 127.0.0.1 only (src/Server.cs:42)", "no auth middleware on /api routes (Startup.cs:18)", "console app with no network listener (Program.cs)". This MUST match the Component Exposure Table in 2-architecture.md.]
 
 [FILL: specific file paths, line numbers, config keys, code snippets]
 
@@ -98,7 +106,7 @@
 
 #### Evidence
 
-**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — must match the Component Exposure Table in 0.1-architecture.md]
+**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — must match the Component Exposure Table in 2-architecture.md]
 
 [FILL]
 
@@ -142,7 +150,7 @@
 
 #### Evidence
 
-**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — must match the Component Exposure Table in 0.1-architecture.md]
+**Prerequisite basis:** [FILL: cite the specific code/config that determines this finding's prerequisite — must match the Component Exposure Table in 2-architecture.md]
 
 [FILL]
 
@@ -160,7 +168,7 @@
 [END-CONDITIONAL-EMPTY]
 ```
 
-At the END of `3-findings.md`, append the Threat Coverage Verification table:
+At the END of `5-securityfindings.md`, append the Threat Coverage Verification table:
 
 ```markdown
 ---
@@ -169,7 +177,7 @@ At the END of `3-findings.md`, append the Threat Coverage Verification table:
 
 | Threat ID | Finding ID | Status |
 |-----------|------------|--------|
-[REPEAT: one row per threat from ALL components in 2-stride-analysis.md]
+[REPEAT: one row per threat from ALL components in 4-stride-analysis.md]
 | [FILL: T##.X] | [FILL: FIND-## or —] | [FILL: ✅ Covered (FIND-XX) / ✅ Mitigated (FIND-XX) / 🔄 Mitigated by Platform] |
 [END-REPEAT]
 
@@ -181,7 +189,7 @@ At the END of `3-findings.md`, append the Threat Coverage Verification table:
   2. Do NOT use plain text like "Finding", "Mitigated", "Covered" without the emoji
   3. Do NOT use "Needs Review", "Accepted Risk", or "N/A"
   4. Column headers are EXACTLY: `Threat ID | Finding ID | Status` (NOT `Threat | Finding | Status`)
-  5. Every threat from 2-stride-analysis.md appears in this table (no missing threats)
+  5. Every threat from 4-stride-analysis.md appears in this table (no missing threats)
   If ANY check fails → FIX NOW. -->
 ```
 
@@ -195,3 +203,24 @@ At the END of `3-findings.md`, append the Threat Coverage Verification table:
 - Sub-sections: `#### Description`, `#### Evidence`, `#### Remediation`, `#### Verification`
 - Organized by TIER — no `## Critical Findings` or `## Mitigated` sections
 - Exactly 3 tier sections (all mandatory, even if empty with "*No Tier N findings identified.*")
+
+### Pattern References Template *(OPTIONAL — include only if Step 1.5 pattern matching was performed)*
+
+After the Threat Coverage Verification table, append the Pattern References section if archetype matching was done:
+
+```markdown
+---
+
+## Pattern References
+
+| Component | Matched Archetype | Confidence | Pattern Threats Referenced | Mode |
+|-----------|-------------------|------------|---------------------------|------|
+[REPEAT: one row per component with a matched archetype]
+| [FILL: ComponentName] | [FILL: archetype-id] | [FILL: 0.XX] | [FILL: T-ARCH-NNN, ...] | [FILL: Public or Internal] |
+[END-REPEAT]
+
+> Patterns derived from anonymized security reviews of similar component types.
+> Pattern matches are advisory — all findings are verified against actual code.
+```
+
+If no archetypes matched with ≥0.4 confidence, omit this section entirely. Do not include an empty table.

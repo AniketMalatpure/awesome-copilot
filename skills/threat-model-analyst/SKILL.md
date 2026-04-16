@@ -37,7 +37,7 @@ If the user asks to compare two commits or two reports, use **incremental mode**
 For all other requests (analyze a repo, generate a threat model, perform STRIDE analysis):
 
 → Read [orchestrator.md](./references/orchestrator.md) — it contains the complete 10-step workflow,
-  34 mandatory rules, tool usage instructions, sub-agent governance rules, and the
+  38 mandatory rules, tool usage instructions, sub-agent governance rules, and the
   verification process. Do not skip this step.
 
 ## Reference Files
@@ -46,13 +46,16 @@ Load the relevant file when performing each task:
 
 | File | Use When | Content |
 |------|----------|---------|
-| [Orchestrator](./references/orchestrator.md) | **Always — read first** | Complete 10-step workflow, 34 mandatory rules, sub-agent governance, tool usage, verification process |
+| [Orchestrator](./references/orchestrator.md) | **Always — read first** | Complete 10-step workflow, 38 mandatory rules (including pattern matching, internal-knowledge lookup, review question gates, and TOC generation), sub-agent governance, tool usage, verification process |
 | [Incremental Orchestrator](./references/incremental-orchestrator.md) | **Incremental/update analyses** | Complete incremental workflow: load old skeleton, change detection, generate report with status annotations, HTML comparison |
 | [Analysis Principles](./references/analysis-principles.md) | Analyzing code for security issues | Verify-before-flagging rules, security infrastructure inventory, OWASP Top 10:2025, platform defaults, exploitability tiers, severity standards |
 | [Diagram Conventions](./references/diagram-conventions.md) | Creating ANY Mermaid diagram | Color palette, shapes, sidecar co-location rules, pre-render checklist, DFD vs architecture styles, sequence diagram styles |
-| [Output Formats](./references/output-formats.md) | Writing ANY output file | Templates for 0.1-architecture.md, 1-threatmodel.md, 2-stride-analysis.md, 3-findings.md, 0-assessment.md, common mistakes checklist |
+| [Output Formats](./references/output-formats.md) | Writing ANY output file | Templates for 2-architecture.md, 3-threatmodel.md, 4-stride-analysis.md, 5-securityfindings.md, 1-assessment.md, common mistakes checklist |
 | [Skeletons](./references/skeletons/) | **Before writing EACH output file** | 8 verbatim fill-in skeletons (`skeleton-*.md`) — read the relevant skeleton, copy VERBATIM, fill `[FILL]` placeholders. One skeleton per output file. Loaded on-demand to minimize context usage. |
 | [Verification Checklist](./references/verification-checklist.md) | Final verification pass + inline quick-checks | All quality gates: inline quick-checks (run after each file write), per-file structural, diagram rendering, cross-file consistency, evidence quality, JSON schema — designed for sub-agent delegation |
+| [Knowledge Integration](./references/knowledge-integration.md) | Pattern matching in Step 1.5 / Step 0.5 | Archetype matching rules, confidence thresholds, internal mode gating, how patterns influence STRIDE analysis and output sections |
+| [Security Patterns](./references/security-patterns/) | Referenced by knowledge-integration.md | Anonymized component archetypes with common threats, decisions, risks, and review questions derived from real security reviews |
+| [Security Review Questions](./references/security-review-questions.md) | Step 7 (findings) or after Step 1.5 | 80+ categorized security review questions from real reviews; map to system by archetype tags, answer from code, flag gaps for manual input |
 | [TMT Element Taxonomy](./references/tmt-element-taxonomy.md) | Identifying DFD elements from code | Complete TMT-compatible element type taxonomy, trust boundary detection, data flow patterns, code analysis checklist |
 
 ## When to Activate

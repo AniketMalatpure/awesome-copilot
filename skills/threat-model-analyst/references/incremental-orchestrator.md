@@ -7,7 +7,7 @@ This file contains the complete orchestration logic for performing an **incremen
 ## ⚡ Context Budget — Read Files Selectively
 
 **Phase 1 (setup + change detection):** Read this file (`incremental-orchestrator.md`) only. The old `threat-inventory.json` provides the structural skeleton — no need to read other skill files yet.
-**Phase 2 (report generation):** Read `orchestrator.md` (for mandatory rules 1–34), `output-formats.md`, `diagram-conventions.md` — plus the relevant skeleton from `skeletons/` before writing each file. See the incremental-specific rules below.
+**Phase 2 (report generation):** Read `orchestrator.md` (for mandatory rules 1–38, including pattern matching, internal-knowledge lookup, review question gates, and TOC generation), `output-formats.md`, `diagram-conventions.md` — plus the relevant skeleton from `skeletons/` before writing each file. See the incremental-specific rules below.
 **Phase 3 (verification):** Delegate to a sub-agent with `verification-checklist.md` (all 9 phases, including Phase 8 for comparison HTML).
 
 ---
@@ -37,7 +37,7 @@ Use incremental analysis when ALL of these conditions are met:
 |-------|--------|-----------|
 | Baseline report folder | Path to `threat-model-*` directory | Yes |
 | Baseline `threat-inventory.json` | `{baseline_folder}/threat-inventory.json` | Yes |
-| Baseline commit SHA | From `{baseline_folder}/0-assessment.md` Report Metadata | Yes |
+| Baseline commit SHA | From `{baseline_folder}/1-assessment.md` Report Metadata | Yes |
 | Target commit | User-provided SHA or defaults to HEAD | Yes (default: HEAD) |
 
 ---
@@ -62,7 +62,7 @@ Use incremental analysis when ALL of these conditions are met:
 
 3. **Validate inputs:**
    - Confirm baseline folder exists: `Test-Path {baseline_folder}/threat-inventory.json`
-   - Read baseline commit SHA from `0-assessment.md`: search for `| Git Commit |` row
+   - Read baseline commit SHA from `1-assessment.md`: search for `| Git Commit |` row
    - Confirm target commit is resolvable: `git rev-parse {target_sha}`
    - **Get commit dates:** `git log -1 --format="%ai" {baseline_sha}` and `git log -1 --format="%ai" {target_sha}` — NOT today's date
    - **Get code change counts** (for HTML metrics bar):
@@ -89,6 +89,21 @@ Use incremental analysis when ALL of these conditions are met:
    ```
    threat-model-{YYYYMMDD-HHmmss}/
    ```
+
+6. **Security Pattern Matching** *(⛔ ALWAYS ATTEMPT — skip ONLY if the file read for `security-patterns/patterns-manifest.json` returns "file not found")*
+
+   **⛔ DO NOT SKIP THIS STEP without first attempting to read the manifest file.** Record the outcome as `STEP_0_5_RESULT` (archetypes matched or "file not found"). This value is checked by the PRE-PHASE-4 GATE before any report files are written.
+
+   If security patterns are available AND the baseline report has `pattern_context` in its `threat-inventory.json`, load the same pattern context to maintain archetype consistency with the baseline's mappings.
+
+   Follow `knowledge-integration.md` rules:
+   - Read the patterns manifest and match components to archetypes
+   - Load matched archetype files for review questions and threat patterns
+   - **(⛔ MANDATORY ATTEMPT)** Check if `../internal-knowledge/internal-manifest.json` exists. If yes, run ALL 6 health checks from `knowledge-integration.md` § Internal Mode Gating. Record the outcome as `INTERNAL_MODE_RESULT` — one of: `"active: N systems loaded from M archetypes"`, `"inactive: health check failed — [reason]"`, or `"inactive: directory not found"`. If active, load top-3 similar systems per matched archetype above 0.5 threshold.
+   - Record pattern context for inclusion in updated output files
+   - Maintain baseline archetype mappings where components are unchanged; re-match for new components
+
+   **⛔ Pattern context is advisory.** All threats still require code verification.
 
 ---
 
@@ -186,8 +201,18 @@ For EACH component in inherited inventory:
 
 ## Phase 4: Generate Report Files
 
+⛔ **PRE-PHASE-4 GATE (MANDATORY — blocks ALL file writing until pattern matching is done):**
+Before writing ANY report file, verify:
+1. You have a `STEP_0_5_RESULT` value (either matched archetypes with confidence scores, or "file not found")
+2. If `STEP_0_5_RESULT` is missing → STOP. Go back and execute Phase 0 Step 6 NOW.
+3. If `patterns-manifest.json` was found and archetypes were matched, confirm you read at least one archetype `.md` file.
+4. You have an `INTERNAL_MODE_RESULT` value (one of: `"active: ..."`, `"inactive: health check failed — ..."`, or `"inactive: directory not found"`)
+5. If `INTERNAL_MODE_RESULT` is missing → STOP. Go back and execute the internal-knowledge check in Phase 0 Step 6 NOW.
+6. If `INTERNAL_MODE_RESULT` starts with `"active"`, confirm you loaded at least one system JSON from `../internal-knowledge/systems/`.
+**This gate exists because pattern matching and internal-knowledge lookup are the most-skipped steps in observed runs.** They catch 15-25% of threats that pure STRIDE misses.
+
 Now generate all report files. **Read the relevant skill files before starting:**
-- `orchestrator.md` — mandatory rules 1–34 apply to all report files
+- `orchestrator.md` — mandatory rules 1–38 apply to all report files
 - `output-formats.md` — templates and format rules
 - `diagram-conventions.md` — diagram colors and styles
 - **Before writing EACH file, read the corresponding skeleton from `skeletons/skeleton-*.md`** — copy VERBATIM and fill `[FILL]` placeholders
@@ -196,7 +221,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 
 **⛔ CRITICAL: The incremental report is a STANDALONE report.** Someone reading it without the old report must understand the complete security posture. Status annotations ([STILL PRESENT], [FIXED], [NEW CODE], etc.) are additions on top of complete content — not replacements for it.
 
-### 4a. 0.1-architecture.md
+### 4a. 2-architecture.md
 
 - **Read `skeletons/skeleton-architecture.md` first** — use as structural template
 - Copy the old report's component structure as your starting template
@@ -207,7 +232,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 - Tech stack, deployment model: update if changed, otherwise carry forward
 
   ⛔ **DEPLOYMENT CLASSIFICATION IS MANDATORY (even in incremental mode):**
-  The `0.1-architecture.md` MUST contain:
+  The `2-architecture.md` MUST contain:
   1. `**Deployment Classification:** \`[VALUE]\`` line (e.g., `K8S_SERVICE`, `LOCALHOST_DESKTOP`)
   2. `### Component Exposure Table` with columns: Component, Listens On, Auth Required, Reachability, Min Prerequisite, Derived Tier
   If the baseline had these, carry them forward and update for new/modified components.
@@ -215,9 +240,9 @@ Now generate all report files. **Read the relevant skill files before starting:*
   **DO NOT proceed to Step 4b without these two elements in place.**
 
 - Scenarios: keep old scenarios, add new ones for new functionality
-- All standard `0.1-architecture.md` rules from `output-formats.md` apply
+- All standard `2-architecture.md` rules from `output-formats.md` apply
 
-### 4b. 1.1-threatmodel.mmd (DFD)
+### 4b. 3.1-threatmodel.mmd (DFD)
 
 - **Read `skeletons/skeleton-dfd.md` and `skeletons/skeleton-summary-dfd.md` first**
 - Start from the old DFD's logical layout
@@ -228,19 +253,20 @@ Now generate all report files. **Read the relevant skill files before starting:*
 - **New flows:** New IDs continuing the sequence
 - All standard DFD rules from `diagram-conventions.md` apply (flowchart LR, color palette, etc.)
 
-  ⛔ **POST-DFD GATE:** After creating `1.1-threatmodel.mmd`, count elements and boundaries. If elements > 15 OR boundaries > 4 → create `1.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW. Do NOT proceed to Step 4c until the decision is made.
+  ⛔ **POST-DFD GATE:** After creating `3.1-threatmodel.mmd`, count elements and boundaries. If elements > 15 OR boundaries > 4 → create `3.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW. Do NOT proceed to Step 4c until the decision is made.
 
-### 4c. 1-threatmodel.md
+### 4c. 3-threatmodel.md
 
 - **Read `skeletons/skeleton-threatmodel.md` first** — use table structure
+- **Section order:** Data Flow Diagram → Summary View (if applicable) → Summary to Detailed Mapping (if applicable) → Security Review Questions (placeholder for Step 7c) → Element Table → Data Flow Table → Trust Boundary Table
 - Element table: all old elements + new elements, with an added `Status` column
   - Values: `Unchanged`, `Modified`, `New`, `Removed`, `Restructured`
 - Flow table: all old flows + new flows, with `Status` column
 - Boundary table: inherited boundaries + any new ones
-- If `1.2-threatmodel-summary.mmd` was generated, include `## Summary View` section with the summary diagram and mapping table
+- If `3.2-threatmodel-summary.mmd` was generated, include `## Summary View` section with the summary diagram and mapping table
 - All standard table rules from `output-formats.md` apply
 
-### 4d. 2-stride-analysis.md
+### 4d. 4-stride-analysis.md
 
 - **Read `skeletons/skeleton-stride-analysis.md` first** — use Summary table and per-component structure
 
@@ -268,7 +294,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 ```
 
 3. **STRIDE categories may produce 0, 1, 2, 3+ threats** per component. Do NOT cap at 1 threat per category. Components with rich security surfaces should typically have 2-4 threats per relevant category. If every STRIDE cell in the Summary table is 0 or 1, the analysis is too shallow — go back and identify additional threat vectors. The Summary table columns reflect actual threat counts.
-4. **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`0.1-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier. Use the canonical prerequisite→tier mapping from `analysis-principles.md`. Prerequisites MUST use only canonical values: `None`, `Authenticated User`, `Privileged User`, `Internal Network`, `Local Process Access`, `Host/OS Access`, `Admin Credentials`, `Physical Access`, `{Component} Compromise`. ⛔ `Application Access` and `Host Access` are FORBIDDEN.
+4. **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`2-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier. Use the canonical prerequisite→tier mapping from `analysis-principles.md`. Prerequisites MUST use only canonical values: `None`, `Authenticated User`, `Privileged User`, `Internal Network`, `Local Process Access`, `Host/OS Access`, `Admin Credentials`, `Physical Access`, `{Component} Compromise`. ⛔ `Application Access` and `Host Access` are FORBIDDEN.
 
 **⛔ HEADING ANCHOR RULE (applies to ALL output files):** ALL `##` and `###` headings in every output file must be PLAIN text — NO status tags (`[Existing]`, `[Fixed]`, `[Partial]`, `[New]`, `[Removed]`, or any old-style tags) in heading text. Tags break markdown anchor links and pollute table-of-contents. Place status annotations on the FIRST LINE of the section/finding body instead:
 - ✅ `## KmsPluginProvider` with first line `> **[New]** Component added in this release.`
@@ -276,7 +302,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 - ❌ `## KmsPluginProvider [New]` (breaks `#kmspluginprovider` anchor)
 - ❌ `### FIND-01: Missing Auth Check [Existing]` (pollutes heading)
 
-This rule applies to: `0.1-architecture.md`, `2-stride-analysis.md`, `3-findings.md`, `1-threatmodel.md`.
+This rule applies to: `2-architecture.md`, `4-stride-analysis.md`, `5-securityfindings.md`, `3-threatmodel.md`.
 
 For each component, the STRIDE analysis approach depends on its change status:
 
@@ -317,13 +343,22 @@ Add a `Change` column to each threat table row with one of:
   2. No old-style tags: Still Present, New (Code), New (Modified), Previously Unidentified
   3. Fixed threats cite the specific code change
 
-### 4e. 3-findings.md
+### 4e. 5-securityfindings.md
+
+⛔ **PRE-FINDINGS GATE (MANDATORY — blocks findings until security review questions are done):**
+Before writing `5-securityfindings.md`, verify:
+1. You have attempted to read `security-review-questions.md` and mapped relevant questions to the system
+2. Record the outcome as `STEP_7C_RESULT` (question count mapped or "file not found")
+3. If `STEP_7C_RESULT` is missing → STOP. Execute security review question mapping NOW per orchestrator.md Step 7c.
+4. If any ❌ answers were found, confirm they are queued as findings.
+5. Confirm the `## Security Review Questions` section exists in `3-threatmodel.md` (if questions were mapped).
+**This gate catches auth gaps, secret management issues, and operational blind spots that STRIDE alone misses.**
 
 ⛔ **BEFORE WRITING ANY FINDING — Re-read `skeletons/skeleton-findings.md` NOW.**
 The skeleton defines the EXACT structure for each finding block, including the mandatory `**Prerequisite basis:**` line in the `#### Evidence` section. Every finding — whether [Existing], [New], [Fixed], or [Partial] — MUST follow this skeleton structure.
 
 ⛔ **DEPLOYMENT CONTEXT GATE (FAIL-CLOSED) — applies to ALL findings (new and carried-forward):**
-Read `0.1-architecture.md` Deployment Classification and Component Exposure Table.
+Read `2-architecture.md` Deployment Classification and Component Exposure Table.
 If classification is `LOCALHOST_DESKTOP` or `LOCALHOST_SERVICE`:
 - ZERO findings may have `Exploitation Prerequisites` = `None` → fix to `Local Process Access` or `Host/OS Access`
 - ZERO findings may be in `## Tier 1` → downgrade to T2/T3
@@ -441,7 +476,7 @@ Same schema as single analysis, with additional fields:
 }
 ```
 
-### 4g. 0-assessment.md
+### 4g. 1-assessment.md
 
 - **Read `skeletons/skeleton-assessment.md` first** — use section order and table structures
 
@@ -646,7 +681,7 @@ After standard verification passes, run the incremental-specific checks from `ex
 
 ## ⛔ Rules Specific to Incremental Analysis
 
-These rules supplement (not replace) the 34 mandatory rules from `orchestrator.md`:
+These rules supplement (not replace) the 38 mandatory rules from `orchestrator.md`:
 
 ### Rule I1: Old Report Assessment Judgments Are Preserved
 

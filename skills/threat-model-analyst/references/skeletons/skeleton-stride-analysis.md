@@ -1,4 +1,4 @@
-# Skeleton: 2-stride-analysis.md
+# Skeleton: 4-stride-analysis.md
 
 > **⛔ Copy the template content below VERBATIM (excluding the outer code fence). Replace `[FILL]` placeholders. The "A" in STRIDE-A is ALWAYS "Abuse" — NEVER "Authorization".**
 > **⛔ Exploitability Tiers table MUST have EXACTLY 4 columns: `Tier | Label | Prerequisites | Assignment Rule`. DO NOT merge into 3 columns. DO NOT rename `Assignment Rule` to `Description`.**
@@ -9,6 +9,13 @@
 
 ```markdown
 # STRIDE + Abuse Cases — Threat Analysis
+
+[TOC: Generate a flat bullet list of all `## ` headings in this file as Markdown anchor links. Example:
+- [Exploitability Tiers](#exploitability-tiers)
+- [Summary](#summary)
+- [ComponentName](#componentname)
+- ...one entry per `## ` heading in the final file.
+List every component section.]
 
 > This analysis uses the standard **STRIDE** methodology (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) extended with **Abuse Cases** (business logic abuse, workflow manipulation, feature misuse). The "A" column in tables below represents Abuse — a supplementary category covering threats where legitimate features are misused for unintended purposes. This is distinct from Elevation of Privilege (E), which covers authorization bypass.
 
