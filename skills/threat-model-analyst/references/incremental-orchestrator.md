@@ -253,7 +253,15 @@ Now generate all report files. **Read the relevant skill files before starting:*
 - **New flows:** New IDs continuing the sequence
 - All standard DFD rules from `diagram-conventions.md` apply (flowchart LR, color palette, etc.)
 
-  ⛔ **POST-DFD GATE:** After creating `3.1-threatmodel.mmd`, count elements and boundaries. If elements > 15 OR boundaries > 4 → create `3.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW. Do NOT proceed to Step 4c until the decision is made.
+  ⛔ **POST-DFD GATE:** After creating `3.1-threatmodel.mmd`:
+
+  **A. Run the deterministic shape/init validator (MANDATORY):**
+  ```
+  pwsh -NoProfile -File <skill-root>/references/validate-dfd.ps1 -Path <out-folder>/3.1-threatmodel.mmd
+  ```
+  If exit code ≠ 0, fix every reported violation and re-run until it prints `validate-dfd OK`. Do NOT proceed to Step 4c until the validator passes. **Resume sessions MUST also run this validator** — never inherit a baseline DFD without re-validating it; if the baseline file fails, regenerate from scratch using the current element list rather than copying the malformed baseline.
+
+  **B. Summary threshold:** count elements and boundaries. If elements > 15 OR boundaries > 4 → create `3.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW and run the validator against it as well. Do NOT proceed to Step 4c until the decision is made AND the validator passes for every `.mmd` file written.
 
 ### 4c. 3-threatmodel.md
 

@@ -59,10 +59,26 @@ flowchart LR
 - All subgraph IDs: `subgraph ID["Title"]`
 
 <!-- ⛔ POST-DFD GATE — IMMEDIATELY after creating this file:
-  1. Count element nodes: lines with (("...")), [("...")], ["..."] shapes
-  2. Count boundaries: lines with 'subgraph'
-  3. If elements > 15 OR boundaries > 4:
-     → OPEN skeleton-summary-dfd.md and create 3.2-threatmodel-summary.mmd NOW
-     → Do NOT proceed to 3-threatmodel.md until summary exists
-  4. If threshold NOT met → skip summary, proceed to 3-threatmodel.md
-  This is the most frequently skipped step. The gate is MANDATORY. -->
+
+  STEP A — Shape & init validation (MANDATORY, deterministic):
+     Run the validator script that ships with this skill:
+         pwsh -NoProfile -File <skill-root>/references/validate-dfd.ps1 -Path <out>/3.1-threatmodel.mmd
+     If the script exits non-zero, the file FAILS the gate. Read the stderr
+     output, fix every reported violation, and re-run the validator until it
+     prints 'validate-dfd OK'. Do NOT proceed to 3-threatmodel.md until the
+     validator passes. This catches the three failure modes that prose
+     checklists routinely miss:
+        • missing or wrong %%{init:...}%% line 1
+        • inverted shapes (process as round-rect, external as circle, etc.)
+        • foreign palette colors (Chakra/Material variants)
+
+  STEP B — Summary diagram threshold:
+     1. Count element nodes: lines with (("...")), [("...")], ["..."] shapes
+     2. Count boundaries: lines with 'subgraph'
+     3. If elements > 15 OR boundaries > 4:
+        → OPEN skeleton-summary-dfd.md and create 3.2-threatmodel-summary.mmd NOW
+        → Run validate-dfd.ps1 against the summary file as well
+        → Do NOT proceed to 3-threatmodel.md until summary exists AND passes the validator
+     4. If threshold NOT met → skip summary, proceed to 3-threatmodel.md
+
+  Both steps are MANDATORY. Step A is the most frequently skipped step. -->

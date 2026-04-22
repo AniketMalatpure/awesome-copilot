@@ -67,6 +67,7 @@ These are the required behaviors for every threat model report. Follow each rule
 36. **Step 7c (Security Review Questions) is MANDATORY.** You MUST attempt to read `security-review-questions.md` (sibling to this file) before writing `5-securityfindings.md`. The ONLY valid skip reason is "file not found". Record the outcome (question count mapped or "file not found") as `STEP_7C_RESULT` — this value is checked by the PRE-WRITE GATE in Step 8. If you cannot produce `STEP_7C_RESULT`, you have not completed Step 7c.
 37. **Step 1.5d (Internal Knowledge Lookup) is MANDATORY when the directory exists.** You MUST attempt to check whether `../internal-knowledge/internal-manifest.json` exists (relative to this file) during Step 1.5. If the file exists, run ALL 6 health checks from `knowledge-integration.md` § Internal Mode Gating. Record the outcome as `INTERNAL_MODE_RESULT` — one of: `"active: N systems loaded from M archetypes"`, `"inactive: health check failed — [reason]"`, or `"inactive: directory not found"`. This value is checked by the PRE-STEP-2 GATE. If internal mode is active, `1-assessment.md` MUST include an `## Institutional Context` section and `threat-inventory.json` MUST have `pattern_context.mode` = `"internal"`. If you cannot produce `INTERNAL_MODE_RESULT`, you have not completed Step 1.5d.
 38. **Every output `.md` file MUST begin with a Table of Contents (TOC)** immediately after the `# ` title heading. The TOC lists all `## ` sections in that file as Markdown anchor links (e.g., `- [Executive Summary](#executive-summary)`). Generate the TOC from the actual `## ` headings present in the file. The TOC uses a flat bullet list — do NOT nest sub-sections. Each skeleton file includes a `[TOC]` placeholder showing where to insert it. This rule applies to: `1-assessment.md`, `2-architecture.md`, `3-threatmodel.md`, `4-stride-analysis.md`, `5-securityfindings.md`.
+39. **Every `.mmd` file MUST pass `references/validate-dfd.ps1`** before the agent proceeds to the next deliverable. Immediately after writing `3.1-threatmodel.mmd` (and `3.2-threatmodel-summary.mmd` when generated), run `pwsh -NoProfile -File <skill-root>/references/validate-dfd.ps1 -Path <out>/<file>.mmd`. If the script exits non-zero, the agent MUST fix every reported violation and re-run until the script prints `validate-dfd OK`. The validator deterministically enforces: (a) line 1 starts with `%%{init:`, (b) `'background': '#ffffff'` is present, (c) `flowchart LR` direction (never TB), (d) `classDef process / external / datastore` lines exist, (e) every `:::process` node uses `(("Name"))` (circle), every `:::external` uses `["Name"]` (rectangle), every `:::datastore` uses `[("Name")]` (cylinder), every `:::newComponent`/`:::removedComponent` uses `(("Name"))`, (f) no foreign palette colors. This rule is the primary enforcement mechanism for Rule 30 and the diagram conventions in `diagram-conventions.md`. **Resume sessions MUST also run the validator** before treating any pre-existing `.mmd` file as carry-forward.
 
 ### Rule Precedence (when guidance conflicts)
 
@@ -420,11 +421,27 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - ⚠️ **BEFORE FINALIZING:** Run the Pre-Render Checklist from `diagram-conventions.md`
 
    ⛔ **POST-DFD GATE — Run IMMEDIATELY after creating `3.1-threatmodel.mmd`:**
+
+   **A. Deterministic shape/init validation (MANDATORY):**
+   Run the validator script bundled with this skill:
+   ```
+   pwsh -NoProfile -File <skill-root>/references/validate-dfd.ps1 -Path <out-folder>/3.1-threatmodel.mmd
+   ```
+   If exit code ≠ 0, the file FAILS. Read the reported violations, fix the
+   `.mmd` file, and re-run until the validator prints `validate-dfd OK`.
+   Do NOT proceed to `3-threatmodel.md` until the validator passes. This
+   catches the three recurring failure modes that the prose checklist misses:
+   missing/incorrect `%%{init:...}%%` on line 1, inverted node shapes
+   (`(())` for externals or `[]`/`()` for processes), and foreign palette
+   colors. See Rule 39.
+
+   **B. Summary diagram threshold:**
    1. Count elements (nodes with `((...))`, `[(...)`, `["..."]`) in `3.1-threatmodel.mmd`
    2. Count boundaries (`subgraph` lines)
    3. If elements > 15 OR boundaries > 4:
       → You MUST create `3.2-threatmodel-summary.mmd` using `skeleton-summary-dfd.md` NOW
-      → Do NOT proceed to `3-threatmodel.md` until the summary file exists
+      → Run `validate-dfd.ps1` against the summary file too
+      → Do NOT proceed to `3-threatmodel.md` until the summary file exists AND passes the validator
    4. If threshold NOT met → skip summary, proceed to `3-threatmodel.md`
    5. Create `3-threatmodel.md` (include Threat Model section if summary was generated). Section order: Threat Model (if applicable) → Expanded Threat Model → [placeholder for Security Review Questions from Step 7c] → Basic to Expanded Threat Model Mapping (if applicable) → Element Table → Data Flow Table → Trust Boundary Table. If no summary diagram was generated, omit Threat Model and Basic to Expanded Threat Model Mapping, and start with Expanded Threat Model. See `output-formats.md` for the template.
 
